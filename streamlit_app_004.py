@@ -86,6 +86,8 @@ def plot_station(df, station_name):
         return
 
     df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
+    end_time = df_pivot.index.max()
+    start_time = end_time - pd.Timedelta(hours=48)
 
     fig, ax_base = plt.subplots(figsize=(16,6))
     ax_base.set_yticks([])
@@ -219,8 +221,8 @@ def plot_station(df, station_name):
 
 
     # ---------------- TIME AXIS ----------------
-    end_time = df_pivot.index.max()
-    start_time = end_time - pd.Timedelta(hours=48)
+    # end_time = df_pivot.index.max()
+    # start_time = end_time - pd.Timedelta(hours=48)
 
     if ax_temp:
         ax_temp.set_xlim(start_time, end_time)
