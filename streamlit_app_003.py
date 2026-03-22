@@ -154,7 +154,7 @@ def plot_station(df, station_name):
     # ---------------- SUNSHINE ----------------
     ax_s = None
     if 'SSV10M' in df_pivot:
-        ax_s = ax_temp_left.twinx()
+        ax_s = ax_base.twinx()
         ax_s.spines['right'].set_position(('outward', 120))
         ax_s.plot(df_pivot.index, df_pivot['SSV10M'], color='gold')
         ax_s.set_ylim(0, 601)
@@ -163,7 +163,7 @@ def plot_station(df, station_name):
     # --- WIND DIRECTION ---
     ax_d = None
     if 'D' in df_pivot:
-        ax_d = ax_temp_left.twinx()
+        ax_d = ax_base.twinx()
         ax_d.spines['right'].set_position(('outward', 150))
         ax_d.scatter(df_pivot.index, df_pivot['D'], color='black', s=3)
         ax_d.set_ylim(0, 360)
