@@ -94,7 +94,7 @@ def plot_station(df, station_name):
     df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
 
     # --- PLOT ---
-    fig, ax_temp_left = plt.subplots(figsize=(16,6))
+    fig, ax_temp_left = plt.subplots(figsize=(16,6), dpi=150)
     ax_temp_left.set_yticks([])
     ax_temp_left.spines['left'].set_visible(False)
 
@@ -287,7 +287,9 @@ def plot_station(df, station_name):
     if ax_temp: ax_temp.set_xlabel("Time")
     fig.subplots_adjust(left=0.05, right=0.75, top=0.92, bottom=0.15)
 
-    st.pyplot(fig)
+    st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
+    st.pyplot(fig, use_container_width=False)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ---------------- UI ----------------
