@@ -90,7 +90,7 @@ def plot_station(df, station_name):
         st.error("No data available")
         return
 
-    df_pivot = combined_df.pivot(index='DT', columns='ELEMENT', values='VAL')
+    df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
 
     # --- PLOT ---
     fig, ax_temp_left = plt.subplots(figsize=(16,6))
@@ -136,8 +136,8 @@ def plot_station(df, station_name):
             )
 
     # --- X-axis setup ---
-    combined_df.sort_values('DT', inplace=True)
-    df_pivot = combined_df.pivot(index='DT', columns='ELEMENT', values='VAL')
+    df.sort_values('DT', inplace=True)
+    df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
     end_time = df_pivot.index.max()
     start_time = end_time - pd.Timedelta(hours=48)
     if start_time < df_pivot.index.min():
