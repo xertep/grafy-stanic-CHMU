@@ -40,6 +40,7 @@ def load_stations():
         return {
             f"{row[2]} ({row[1]})": row[0]
             for row in meta_json['data']['data']['values']
+            if f"{row[2]} ({row[1]})" != "Reykjavik (ZIS04030)"
         }
     except Exception as e:
         st.error(f"Error loading stations: {e}")
@@ -293,7 +294,17 @@ def plot_station(df, station_name):
 st.title("ČHMÚ meteostanice 🌦️")
 
 # Station select
-station_name = st.selectbox("Vyber stanici", list(stations.keys()))
+station_list = list(stations.keys())
+
+default_station = "Brno, Žabovřesky (B2BZAB01)"
+
+default_index = station_list.index(default_station) if default_station in station_list else 0
+
+station_name = st.selectbox(
+    "Vyber stanici",
+    station_list,
+    index=default_index
+)
 
 if st.button("Zobraz data"):
     wsi = stations[station_name]
