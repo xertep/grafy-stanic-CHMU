@@ -293,7 +293,7 @@ def plot_station(df, station_name):
 st.title("ČHMÚ meteostanice 🌦️")
 
 # Station select
-station_name = st.selectbox("Brno, Žabovřesky (B2BZAB01)", list(stations.keys()))
+station_name = st.selectbox("Vyber stanici", list(stations.keys()))
 
 if st.button("Zobraz data"):
     wsi = stations[station_name]
