@@ -7,7 +7,15 @@ import matplotlib.dates as mdates
 import numpy as np
 import math
 
+
 st.set_page_config(layout="wide")
+
+st.markdown(
+    """
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    """,
+    unsafe_allow_html=True
+)
 
 # ---------------- CONFIG ----------------
 elements = ['T', 'TPM', 'Fmax', 'Fprum', 'H', 'SSV10M', 'D', 'P', 'SRA10M', 'SCEa', 'SCE']
