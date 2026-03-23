@@ -401,6 +401,14 @@ def plot_region_element(region_key, element, regions, stations):
         all_values.extend(df_pivot[element].dropna().tolist())
         all_times.extend(df_pivot.index.tolist())
 
+    # --- COLORS (NO WASTE) ---
+    cmap = get_cmap('tab20')
+    colors = cmap(np.linspace(0, 1, len(valid_series)))
+
+    # --- PLOTTING ---
+    for i, ((x, y), label) in enumerate(zip(valid_series, labels)):
+        ax.plot(x, y, label=label, color=colors[i])
+
     if not all_values or not all_times:
         st.warning("No data available for this selection")
         return
