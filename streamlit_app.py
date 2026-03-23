@@ -9,7 +9,15 @@ import math
 from matplotlib.cm import get_cmap
 
 
-st.set_page_config(layout="wide")
+# Change browser tab title and favicon
+st.set_page_config(
+    page_title="Grafy stanic ČHMÚ",  # this changes the browser tab title
+    page_icon="📈️",                     # optional: emoji or path to an image
+    layout="wide"                        # optional: wide layout for cards
+)
+
+# Your app content
+st.title("Grafy stanic ČHMÚ")
 
 st.markdown(
     """
