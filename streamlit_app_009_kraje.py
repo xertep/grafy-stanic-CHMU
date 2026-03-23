@@ -494,7 +494,8 @@ if mode == "Stanice":
         wsi = station_info["wsi"]
         elevation = station_info["elevation"]
 
-        df = fetch_station_data(wsi)
+        with st.spinner("Načítám data..."):
+            df = fetch_station_data(wsi)
         plot_station(df, station_name, elevation)
 
 
@@ -530,9 +531,10 @@ elif mode == "Region":
             st.session_state.selected_element = elem
 
     if st.session_state.selected_element:
-        plot_region_element(
-            selected_region,
-            st.session_state.selected_element,
-            regions,
-            stations
-        )
+        with st.spinner("Načítám data..."):
+            plot_region_element(
+                selected_region,
+                st.session_state.selected_element,
+                regions,
+                stations
+            )
