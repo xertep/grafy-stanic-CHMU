@@ -505,7 +505,8 @@ elif mode == "Region":
 
     selected_region = st.segmented_control(
         "Region",
-        list(regions.keys())
+        list(regions.keys()),
+        default=list(regions.keys())[0]
     )
 
     st.subheader("Veličina")
@@ -519,8 +520,19 @@ elif mode == "Region":
         "Vlhkost": "H"
     }
 
+    if "selected_element" not in st.session_state:
+        st.session_state.selected_element = None
+
     cols = st.columns(len(elements_buttons))
 
     for i, (label, elem) in enumerate(elements_buttons.items()):
         if cols[i].button(label):
-            plot_region_element(selected_region, elem, regions, stations)
+            st.session_state.selected_element = elem
+
+    if st.session_state.selected_element:
+        plot_region_element(
+            selected_region,
+            st.session_state.selected_element,
+            regions,
+            stations
+        )
