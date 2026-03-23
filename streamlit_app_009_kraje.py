@@ -22,6 +22,54 @@ elements = ['T', 'TPM', 'Fmax', 'Fprum', 'H', 'SSV10M', 'D', 'P', 'SRA10M', 'SCE
 BASE_URL = "https://opendata.chmi.cz/meteorology/climate/now/data/"
 
 
+# --- REGIONS ---
+regions = {
+    "JM": {
+        "full": [
+            "Tišnov, Hájek", "Protivanov", "Ivanovice na Hané", "Brno, Žabovřesky",
+            "Troubsko", "Brno, Tuřany", "Nemochovice", "Ždánice", "Pohořelice",
+            "Kobylí", "Kuchařovice", "Brod nad Dyjí", "Strážnice", "Dyjákovice",
+            "Lednice"
+        ],
+        "precip_only": [
+            "Olešnice", "Obora", "Podivice (B1PODI01)", "Bukovinka",
+            "Džbánice (B2DZBA01)", "Střelice", "Šatov (B2SATO01)"
+        ]
+    },
+    "VY": {
+        "full": [
+            "Svratouch", "Nedvězí", "Havlíčkův Brod", "Libice nad Doubravou",
+            "Přibyslav, Hřiště", "Bystřice nad Pernštejnem", "Herálec", "Vatín",
+            "Košetice", "Nový Rychnov", "Hubenov", "Jihlava, Hruškové Dvory",
+            "Velké Meziříčí", "Černovice", "Počátky", "Sedlec", "Dukovany",
+            "Moravské Budějovice"
+        ],
+        "precip_only": [
+            "Habry", "Krucemburk H3KRUC01", "Kadov", "Žďár nad Sázavou",
+            "Nové Město na Moravě", "Humpolec", "Štoky", "Radostín",
+            "Pacov", "Vysoké Studnice", "Kamenice nad Lipou, Vodná", "Třešť",
+            "Brtnice", "Nová Ves", "Jemnice", "Náměšť nad Oslavou"
+        ]
+    },
+    "ZL": {
+        "full": [
+            "Rožnov pod Radhoštěm", "Valašské Meziříčí", "Horní Bečva",
+            "Velké Karlovice", "Bystřice pod Hostýnem", "Kateřinice, Ojičná",
+            "Vsetín", "Hošťálková, Maruška", "Hošťálková", "Holešov",
+            "Kroměříž", "Valašská Senice", "Zlín", "Vizovice",
+            "Luhačovice, Kladná-Žilín", "Bojkovice", "Štítná nad Vláří",
+            "Staré Město", "Strání", "Žítková", "Kašava, pod Rablinů",
+            "Držková", "Nový Hrozenkov, Kohútka", "Velké Karlovice, Benešky",
+            "Horní Bečva, Kudlačena"
+        ],
+        "precip_only": [
+            "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
+            "Vlkoš (B1VKLO01)", "Staré Hutě", "Hluk"
+        ]
+    }
+}
+
+
 element_names = {
     "T": "Teplota (°C)",
     "TPM": "Teplota přízemní (°C)",
