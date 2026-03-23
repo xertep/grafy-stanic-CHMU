@@ -501,9 +501,7 @@ mode = st.radio("Režim", ["Stanice", "Region"])
 
 # ---------------- STATION MODE ----------------
 if mode == "Stanice":
-
     station_list = list(stations.keys())
-
     default_station = "Brno, Žabovřesky (B2BZAB01)"
     default_index = station_list.index(default_station) if default_station in station_list else 0
 
@@ -516,38 +514,32 @@ if mode == "Stanice":
     # --- Shortcut buttons ---
     col1, col2, col3 = st.columns([2, 1, 1])  # main button + 2 shortcuts
 
+    # Initialize session_state to store chosen station
+    if "chosen_station" not in st.session_state:
+        st.session_state.chosen_station = None
+
     with col1:
         if st.button("Zobraz data"):
-            chosen_station = station_name
-            station_info = stations[chosen_station]
-            wsi = station_info["wsi"]
-            elevation = station_info["elevation"]
-
-            with st.spinner("Načítám data..."):
-                df = fetch_station_data(wsi)
-            plot_station(df, chosen_station, elevation)
+            st.session_state.chosen_station = station_name
 
     with col2:
         if st.button("Dukovany"):
-            chosen_station = "Dukovany (B2DUKO01)"
-            station_info = stations[chosen_station]
-            wsi = station_info["wsi"]
-            elevation = station_info["elevation"]
-
-            with st.spinner("Načítám data..."):
-                df = fetch_station_data(wsi)
-            plot_station(df, chosen_station, elevation)
+            st.session_state.chosen_station = "Dukovany (B2DUKO01)"
 
     with col3:
         if st.button("Brno, Žabovřesky"):
-            chosen_station = "Brno, Žabovřesky (B2BZAB01)"
-            station_info = stations[chosen_station]
-            wsi = station_info["wsi"]
-            elevation = station_info["elevation"]
+            st.session_state.chosen_station = "Brno, Žabovřesky (B2BZAB01)"
 
-            with st.spinner("Načítám data..."):
-                df = fetch_station_data(wsi)
-            plot_station(df, chosen_station, elevation)
+    # --- Plot section (full width) ---
+    if st.session_state.chosen_station:
+        chosen_station = st.session_state.chosen_station
+        station_info = stations[chosen_station]
+        wsi = station_info["wsi"]
+        elevation = station_info["elevation"]
+
+        with st.spinner("Načítám data..."):
+            df = fetch_station_data(wsi)
+        plot_station(df, chosen_station, elevation)
 
 
 # ---------------- REGION MODE ----------------
