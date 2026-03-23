@@ -97,7 +97,7 @@ def centered_axis(ax, series, pad):
     ax.set_ylim(series.min() - pad, series.max() + pad)
 
 
-def plot_station(df, station_name):
+def plot_station(df, station_name, elevation):
     if df.empty:
         st.error("No data available")
         return
@@ -272,7 +272,7 @@ def plot_station(df, station_name):
     if 'P_hm' in df_pivot:
         pressure = df_pivot['P_hm']
     elif 'P' in df_pivot and 'T' in df_pivot:
-        h = elevation
+        h = float(elevation) if elevation is not None else 0
         temp_K = df_pivot['T'] + 273.15
         pressure = df_pivot['P'] * ((1 - (0.0065 * h) / (temp_K + 0.0065 * h + 1)) ** -5.257)
     ax_p = None
@@ -295,7 +295,7 @@ def plot_station(df, station_name):
 
     # --- Finalize ---
     if elevation is not None:
-        title = f"{station_name}, {elevation:.0f} m n. m."
+        title = f"{station_name}, {float(elevation):.0f} m n. m."
     else:
         title = station_name
 
@@ -332,4 +332,4 @@ if st.button("Zobraz data"):
     with st.spinner("Načítám data..."):
         df = fetch_station_data(wsi)
 
-    plot_station(df, station_name)
+    plot_station(df, station_name, elevation)
