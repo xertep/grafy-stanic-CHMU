@@ -369,8 +369,12 @@ def plot_region_element(region_key, element, regions, stations):
     all_values = []
     all_times = []
 
+    # ✅ NEW
+    valid_series = []
+    labels = []
+
+    # --- DATA COLLECTION ---
     for station_partial in station_list:
-        # find matching station from your stations dict
         matches = [name for name in stations.keys() if station_partial in name]
         if not matches:
             continue
@@ -383,7 +387,6 @@ def plot_region_element(region_key, element, regions, stations):
             continue
 
         df = fetch_station_data(wsi)
-
         if df.empty:
             continue
 
@@ -392,15 +395,19 @@ def plot_region_element(region_key, element, regions, stations):
             continue
 
         df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
-
         if element not in df_pivot:
             continue
 
-        ax.plot(df_pivot.index, df_pivot[element], label=station_partial)
+        # ✅ STORE instead of plotting
+        valid_series.append((df_pivot.index, df_pivot[element]))
+        labels.append(station_partial)
 
-        # collect values and times
         all_values.extend(df_pivot[element].dropna().tolist())
         all_times.extend(df_pivot.index.tolist())
+
+    if not valid_series:
+        st.warning("No data available for this selection")
+        return
 
     # --- COLORS (NO WASTE) ---
     cmap = get_cmap('tab20')
