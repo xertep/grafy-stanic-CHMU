@@ -46,7 +46,10 @@ def load_stations():
         meta_json = r.json()
 
         return {
-            f"{row[2]} ({row[1]})": row[0]
+            f"{row[2]} ({row[1]})": {
+                "wsi": row[0],
+                "elevation": row[5]
+            }
             for row in meta_json['data']['data']['values']
             if f"{row[2]} ({row[1]})" != "Reykjavik (ZIS04030)"
         }
@@ -269,7 +272,7 @@ def plot_station(df, station_name):
     if 'P_hm' in df_pivot:
         pressure = df_pivot['P_hm']
     elif 'P' in df_pivot and 'T' in df_pivot:
-        h = 400.15  # example altitude
+        h = elevation
         temp_K = df_pivot['T'] + 273.15
         pressure = df_pivot['P'] * ((1 - (0.0065 * h) / (temp_K + 0.0065 * h + 1)) ** -5.257)
     ax_p = None
@@ -291,7 +294,12 @@ def plot_station(df, station_name):
     if ax_snow: fig.text(0.93, 0.95, "cm", color='#3eab8e')
 
     # --- Finalize ---
-    plt.title(f"{station_name}")
+    if elevation is not None:
+        title = f"{station_name}, {elevation:.0f} m n. m."
+    else:
+        title = station_name
+
+    plt.title(title)
     if ax_temp: ax_temp.set_xlabel("Time")
     fig.subplots_adjust(left=0.05, right=0.75, top=0.92, bottom=0.15)
 
@@ -317,7 +325,9 @@ station_name = st.selectbox(
 )
 
 if st.button("Zobraz data"):
-    wsi = stations[station_name]
+    station_info = stations[station_name]
+    wsi = station_info["wsi"]
+    elevation = station_info["elevation"]
 
     with st.spinner("Načítám data..."):
         df = fetch_station_data(wsi)
