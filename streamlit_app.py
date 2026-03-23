@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 # Your app content
-st.title("Grafy stanic ČHMÚ")
+# st.title("Grafy stanic ČHMÚ")
 
 st.markdown(
     """
