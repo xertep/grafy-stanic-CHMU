@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 import numpy as np
 import math
+from matplotlib.cm import get_cmap
 
 
 st.set_page_config(layout="wide")
