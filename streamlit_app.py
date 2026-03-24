@@ -422,7 +422,7 @@ def plot_region_element(region_key, element, regions, stations):
         return
 
     # --- COLORS (NO WASTE) ---
-    cmap = get_cmap('tab20')
+    cmap = plt.get_cmap('tab20')
     colors = cmap(np.linspace(0, 1, len(valid_series)))
 
     # --- PLOTTING ---
