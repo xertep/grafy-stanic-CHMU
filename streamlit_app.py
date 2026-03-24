@@ -487,7 +487,6 @@ def plot_region_element(region_key, element, regions, stations):
     # --- Labels ---
     nice_name = element_names.get(element, element)
     ax.set_title(f"{region_key} – {nice_name}")
-    ax.set_xlabel("Time")
 
     ax.legend(fontsize=7, loc='upper left', ncol=3)
 
