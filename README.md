@@ -2,7 +2,11 @@ This app uses open data from the Czech Hydrometeorological Institute to display 
 
 Additional features allow users to visualize various meteorological elements from selected regions (Jihomoravský, Zlínský, Vysočina) within a single graph.
 
+The file to use is streamlit_app.py. Working web application (using Streamlit): https://grafy-stanic-chmu-fknzcsm7chmxpvtwczmdyz.streamlit.app/
+
 
 Tato aplikace využívá otevřená data Český hydrometeorologický ústav k zobrazení meteorologických grafů v tradičním, dobře známém stylu ze všech dostupných meteorologických stanic po celé republice.
 
 Další funkce umožňují zobrazit různé meteorologické prvky z vybraných regionů (Jihomoravský, Zlínský, Vysočina) v jednom grafu.
+
+Soubor k použití je streamlit_app.py. Funkční web aplikace (s použitím Streamlit): https://grafy-stanic-chmu-fknzcsm7chmxpvtwczmdyz.streamlit.app/
