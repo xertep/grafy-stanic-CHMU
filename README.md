@@ -5,6 +5,9 @@ Additional features allow users to visualize various meteorological elements fro
 The main file to run the app is streamlit_app.py. 
 A live version of the web application (built with Streamlit) is available here: https://grafy-stanic-chmu-fknzcsm7chmxpvtwczmdyz.streamlit.app/
 
+The app may take a few seconds to load when you open it, especially if it has been inactive for a while.
+This is normal behavior — the app automatically goes to sleep when not in use and needs a short moment to start again.
+
 
 Tato aplikace využívá otevřená data Český hydrometeorologický ústav k zobrazení meteorologických grafů v tradičním, dobře známém stylu ze všech dostupných meteorologických stanic po celé republice.
 
@@ -12,3 +15,6 @@ Další funkce umožňují zobrazit různé meteorologické prvky z vybraných r
 
 Hlavní soubor pro spuštění aplikace je streamlit_app.py. 
 Fuknční webová aplikace (vytvořená pomocí Streamlit) je dostupná zde: https://grafy-stanic-chmu-fknzcsm7chmxpvtwczmdyz.streamlit.app/
+
+Aplikaci může při otevření trvat několik sekund, než se načte, zejména pokud byla delší dobu neaktivní.
+To je běžné chování — aplikace se při nečinnosti automaticky uspí a při dalším otevření potřebuje krátký čas na opětovné spuštění.
