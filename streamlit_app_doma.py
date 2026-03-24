@@ -544,3 +544,43 @@ if mode == "Stanice":
         with st.spinner("Načítám data..."):
             df = fetch_station_data(wsi)
         plot_station(df, chosen_station, elevation)
+
+# ---------------- REGION MODE ----------------
+elif mode == "Region":
+
+    st.subheader("Region")
+
+    selected_region = st.segmented_control(
+        "Region",
+        list(regions.keys()),
+        default=list(regions.keys())[0]
+    )
+
+    st.subheader("Veličina")
+
+    elements_buttons = {
+        "Teplota": "T",
+        "T přízemní": "TPM",
+        "Vítr avg": "Fprum",
+        "Vítr nárazy": "Fmax",
+        "Srážky": "SRA10M",
+        "Vlhkost": "H"
+    }
+
+    if "selected_element" not in st.session_state:
+        st.session_state.selected_element = None
+
+    cols = st.columns(len(elements_buttons))
+
+    for i, (label, elem) in enumerate(elements_buttons.items()):
+        if cols[i].button(label):
+            st.session_state.selected_element = elem
+
+    if st.session_state.selected_element:
+        with st.spinner("Načítám data..."):
+            plot_region_element(
+                selected_region,
+                st.session_state.selected_element,
+                regions,
+                stations
+            )
