@@ -1,36 +1,45 @@
-import streamlit as st
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
+import tkinter as tk
+from tkinter import messagebox
 import matplotlib.dates as mdates
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
+import tkinter.ttk as ttk
 import math
 from matplotlib.cm import get_cmap
 
+# --- GLOBAL canvas holder ---
+canvas = None
 
-# Change browser tab title and favicon
-st.set_page_config(
-    page_title="Grafy stanic ČHMÚ",  # this changes the browser tab title
-    page_icon="📈️",                     # optional: emoji or path to an image
-    layout="wide"                        # optional: wide layout for cards
-)
-
-# Your app content
-# st.title("Grafy stanic ČHMÚ")
-
-st.markdown(
-    """
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    """,
-    unsafe_allow_html=True
-)
-
-# ---------------- CONFIG ----------------
+# Elements we want to plot
 elements = ['T', 'TPM', 'Fmax', 'Fprum', 'H', 'SSV10M', 'D', 'P', 'SRA10M', 'SCEa', 'SCE']
 BASE_URL = "https://opendata.chmi.cz/meteorology/climate/now/data/"
 
+# --- Fetch station metadata from JSON ---
+yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
+META_URL = f"https://opendata.chmi.cz/meteorology/climate/now/metadata/meta1-{yesterday}.json"
 
+try:
+    r = requests.get(META_URL)
+    r.raise_for_status()
+    meta_json = r.json()
+    # Create dict: FULL_NAME -> WSI
+    stations = {
+        f"{row[2]} ({row[1]})": {
+            "wsi": row[0],
+            "elevation": row[5]
+        }
+        for row in meta_json['data']['data']['values']
+    }
+except Exception as e:
+    messagebox.showerror("Error", f"Cannot fetch stations metadata: {e}")
+    stations = {}
+
+
+# --- REGIONS ---
 # --- REGIONS ---
 regions = {
     "JM": {
@@ -92,32 +101,31 @@ element_names = {
     "SCE": "Sněhová pokrývka (cm)"
 }
 
-# ---------------- LOAD STATIONS ----------------
-@st.cache_data(ttl=0)
-def load_stations():
-    try:
-        yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
-        url = f"https://opendata.chmi.cz/meteorology/climate/now/metadata/meta1-{yesterday}.json"
-        r = requests.get(url, timeout=10)
-        r.raise_for_status()
-        meta_json = r.json()
+def find_station_wsi(partial_name):
+    for full_name, wsi in stations.items():
+        if partial_name.lower() in full_name.lower():
+            return full_name, wsi
+    return None, None
 
-        return {
-            f"{row[2]} ({row[1]})": {
-                "wsi": row[0],
-                "elevation": row[5]
-            }
-            for row in meta_json['data']['data']['values']
-            if f"{row[2]} ({row[1]})" != "Reykjavik (ZIS04030)"
-        }
-    except Exception as e:
-        st.error(f"Error loading stations: {e}")
-        return {}
+# --- Helper for centered axes ---
+def centered_axis(ax, series, pad):
+    if series is None or series.empty:
+        return
+    ax.set_ylim(series.min() - pad, series.max() + pad)
 
-stations = load_stations()
+# --- Fetch and plot function ---
+def fetch_and_plot(station_name):
+    global canvas
 
-# ---------------- DATA FETCH ----------------
-def fetch_station_data(wsi):
+    if station_name not in stations:
+        messagebox.showerror("Error", f"Station {station_name} not found")
+        return
+
+    station_info = stations[station_name]
+    wsi = station_info["wsi"]
+    elevation = station_info["elevation"]
+
+    # Last 3 days
     dates = [(datetime.now() - timedelta(days=i)).strftime("%Y%m%d") for i in [2,1,0]]
     combined_df = pd.DataFrame()
 
@@ -138,31 +146,18 @@ def fetch_station_data(wsi):
         df['DT'] = pd.to_datetime(df['DT'], utc=True)\
                        .dt.tz_convert('Europe/Prague')\
                        .dt.tz_localize(None)
-
         df['VAL'] = pd.to_numeric(df['VAL'], errors='coerce')
         df = df[df['ELEMENT'].isin(elements)]
-
         combined_df = pd.concat([combined_df, df])
 
-    return combined_df
-
-
-# ---------------- PLOT ----------------
-def centered_axis(ax, series, pad):
-    if series is None or series.empty:
-        return
-    ax.set_ylim(series.min() - pad, series.max() + pad)
-
-
-def plot_station(df, station_name, elevation):
-    if df.empty:
-        st.error("No data available")
+    if combined_df.empty:
+        messagebox.showerror("Error", "No data for this station")
         return
 
-    df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
+    df_pivot = combined_df.pivot(index='DT', columns='ELEMENT', values='VAL')
 
     # --- PLOT ---
-    fig, ax_temp_left = plt.subplots(figsize=(16,6), dpi=150)
+    fig, ax_temp_left = plt.subplots(figsize=(16,6))
     ax_temp_left.set_yticks([])
     ax_temp_left.spines['left'].set_visible(False)
 
@@ -205,8 +200,8 @@ def plot_station(df, station_name, elevation):
             )
 
     # --- X-axis setup ---
-    df.sort_values('DT', inplace=True)
-    df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
+    combined_df.sort_values('DT', inplace=True)
+    df_pivot = combined_df.pivot(index='DT', columns='ELEMENT', values='VAL')
     end_time = df_pivot.index.max()
     start_time = end_time - pd.Timedelta(hours=48)
     if start_time < df_pivot.index.min():
@@ -329,7 +324,7 @@ def plot_station(df, station_name, elevation):
     if 'P_hm' in df_pivot:
         pressure = df_pivot['P_hm']
     elif 'P' in df_pivot and 'T' in df_pivot:
-        h = float(elevation) if elevation is not None else 0
+        h = elevation  # altitude
         temp_K = df_pivot['T'] + 273.15
         pressure = df_pivot['P'] * ((1 - (0.0065 * h) / (temp_K + 0.0065 * h + 1)) ** -5.257)
     ax_p = None
@@ -352,7 +347,7 @@ def plot_station(df, station_name, elevation):
 
     # --- Finalize ---
     if elevation is not None:
-        title = f"{station_name}, {float(elevation):.0f} m n. m."
+        title = f"{station_name}, {elevation:.0f} m n. m."
     else:
         title = station_name
 
@@ -360,65 +355,88 @@ def plot_station(df, station_name, elevation):
     if ax_temp: ax_temp.set_xlabel("Time")
     fig.subplots_adjust(left=0.05, right=0.75, top=0.92, bottom=0.15)
 
-    st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
-    st.pyplot(fig, use_container_width=False)
-    st.markdown('</div>', unsafe_allow_html=True)
+    # --- Embed into Tkinter ---
+    if canvas: canvas.get_tk_widget().destroy()
+    canvas = FigureCanvasTkAgg(fig, master=graph_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill="both", expand=True)
 
 
-def plot_region_element(region_key, element, regions, stations):
+def plot_region_element(region_key, element):
     region = regions[region_key]
 
     station_list = region["full"]
     if element == "SRA10M":
         station_list = region["full"] + region["precip_only"]
 
-    fig, ax = plt.subplots(figsize=(16,6), dpi=150)
+    global canvas
+    fig, ax = plt.subplots(figsize=(16,6))
+
+    # move y-axis to the right
+    ax.yaxis.tick_right()
+    ax.yaxis.set_label_position("right")
 
     all_values = []
     all_times = []
 
-    # ✅ NEW
     valid_series = []
     labels = []
 
     # --- DATA COLLECTION ---
     for station_partial in station_list:
-        matches = [name for name in stations.keys() if station_partial in name]
-        if not matches:
+        station_name, station_info = find_station_wsi(station_partial)
+        if not station_info:
             continue
-
-        station_name = matches[0]
-        station_info = stations[station_name]
 
         wsi = station_info["wsi"]
         if not wsi:
             continue
 
-        df = fetch_station_data(wsi)
-        if df.empty:
+        combined_df = pd.DataFrame()
+        dates = [(datetime.now() - timedelta(days=i)).strftime("%Y%m%d") for i in [2,1,0]]
+
+        for date_str in dates:
+            url = f"{BASE_URL}10m-{wsi}-{date_str}.json"
+            try:
+                r = requests.get(url)
+                if r.status_code != 200:
+                    continue
+                data = r.json()
+            except:
+                continue
+
+            header = data['data']['data']['header'].split(',')
+            values = data['data']['data']['values']
+
+            df = pd.DataFrame(values, columns=header)
+            df['DT'] = pd.to_datetime(df['DT'], utc=True)\
+                           .dt.tz_convert('Europe/Prague')\
+                           .dt.tz_localize(None)
+            df['VAL'] = pd.to_numeric(df['VAL'], errors='coerce')
+
+            df = df[df['ELEMENT'] == element]
+            combined_df = pd.concat([combined_df, df])
+
+        if combined_df.empty:
             continue
 
-        df = df[df['ELEMENT'] == element]
-        if df.empty:
-            continue
-
-        df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
+        df_pivot = combined_df.pivot(index='DT', columns='ELEMENT', values='VAL')
         if element not in df_pivot:
             continue
 
-        # ✅ STORE instead of plotting
+        # store valid data
         valid_series.append((df_pivot.index, df_pivot[element]))
         labels.append(station_partial)
 
-        all_values.extend(df_pivot[element].dropna().tolist())
+        # collect values
+        all_values.extend([y for y in df_pivot[element] if not pd.isna(y)])
         all_times.extend(df_pivot.index.tolist())
 
     if not valid_series:
-        st.warning("No data available for this selection")
         return
 
     # --- COLORS (NO WASTE) ---
-    cmap = get_cmap('tab20')
+    cmap = plt.get_cmap('tab20')
     colors = cmap(np.linspace(0, 1, len(valid_series)))
 
     # --- PLOTTING ---
@@ -426,7 +444,6 @@ def plot_region_element(region_key, element, regions, stations):
         ax.plot(x, y, label=label, color=colors[i])
 
     if not all_values or not all_times:
-        st.warning("No data available for this selection")
         return
 
     ymin = min(all_values)
@@ -459,7 +476,7 @@ def plot_region_element(region_key, element, regions, stations):
         y_end = math.ceil(ymax / step) * step
 
         for y in np.arange(y_start, y_end + step, step):
-            ax.axhline(y=y, color='lightblue', linestyle='--', linewidth=0.5)
+            ax.axhline(y=y, color='lightblue', linestyle='--', linewidth=0.5, zorder=0)
 
     # --- X-axis ---
     end_time = max(all_times)
@@ -470,7 +487,7 @@ def plot_region_element(region_key, element, regions, stations):
     current_time -= pd.Timedelta(hours=current_time.hour % 4)
 
     while current_time <= end_time:
-        ax.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=0.5)
+        ax.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=0.5, zorder=0)
         current_time += pd.Timedelta(hours=4)
 
     def custom_time_formatter(x, pos):
@@ -479,6 +496,7 @@ def plot_region_element(region_key, element, regions, stations):
 
     ax.xaxis.set_major_locator(mdates.HourLocator(byhour=[0,4,8,12,16,20]))
     ax.xaxis.set_major_formatter(plt.FuncFormatter(custom_time_formatter))
+    plt.setp(ax.get_xticklabels(), rotation=0, ha='center')
 
     # --- Labels ---
     nice_name = element_names.get(element, element)
@@ -487,78 +505,92 @@ def plot_region_element(region_key, element, regions, stations):
 
     ax.legend(fontsize=7, loc='upper left', ncol=3)
 
-    # --- Streamlit output ---
-    st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
-    st.pyplot(fig, use_container_width=False)
-    st.markdown('</div>', unsafe_allow_html=True)
+    # --- Tkinter ---
+    if canvas:
+        canvas.get_tk_widget().destroy()
+
+    canvas = FigureCanvasTkAgg(fig, master=graph_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill="both", expand=True)
 
 
-# ---------------- UI ----------------
-st.title("ČHMÚ meteostanice 🌦️")
+# --- GUI ---
+root = tk.Tk()
+root.title("ČHMÚ grafy stanic")
+root.geometry("1550x850+200+100")
 
-# ---------------- MODE ----------------
-mode = st.radio("Režim", ["Stanice", "Region"])
+# Top frame for station dropdown
+top_frame = tk.Frame(root)
+top_frame.pack(side="top", fill="x", pady=10)
 
-# ---------------- STATION MODE ----------------
-if mode == "Stanice":
+selected_station = tk.StringVar()
 
-    station_list = list(stations.keys())
+combobox = ttk.Combobox(
+    top_frame,
+    textvariable=selected_station,
+    values=list(stations.keys()),
+    width=60
+)
+combobox.pack(pady=5)
+combobox.set("Brno, Žabovřesky (B2BZAB01)")
 
-    default_station = "Brno, Žabovřesky (B2BZAB01)"
-    default_index = station_list.index(default_station) if default_station in station_list else 0
+# --- Autocomplete filtering ---
+def on_keyrelease(event):
+    value = combobox.get().lower()
+    if value == '':
+        combobox['values'] = list(stations.keys())
+    else:
+        filtered = [s for s in stations.keys() if value in s.lower()]
+        combobox['values'] = filtered
 
-    station_name = st.selectbox(
-        "Vyber stanici",
-        station_list,
-        index=default_index
-    )
+combobox.bind('<KeyRelease>', on_keyrelease)
 
-    if st.button("Zobraz data"):
-        station_info = stations[station_name]
-        wsi = station_info["wsi"]
-        elevation = station_info["elevation"]
+btn_plot = tk.Button(top_frame, text="Zobraz", command=lambda: fetch_and_plot(selected_station.get()))
+btn_plot.pack(pady=5)
 
-        with st.spinner("Načítám data..."):
-            df = fetch_station_data(wsi)
-        plot_station(df, station_name, elevation)
+# --- Region selection ---
+region_frame = tk.Frame(root)
+region_frame.pack(side="top", fill="x", pady=5)
 
+region_inner = tk.Frame(region_frame)
+region_inner.pack(anchor="center")
 
-# ---------------- REGION MODE ----------------
-elif mode == "Region":
+selected_region = tk.StringVar(value="JM")  # default region
 
-    st.subheader("Region")
+for region_key in regions.keys():
+    tk.Radiobutton(
+        region_inner,
+        text=region_key,
+        variable=selected_region,
+        value=region_key
+    ).pack(side="left", padx=5)
 
-    selected_region = st.segmented_control(
-        "Region",
-        list(regions.keys()),
-        default=list(regions.keys())[0]
-    )
+# --- Element buttons ---
+element_frame = tk.Frame(root)
+element_frame.pack(side="top", fill="x", pady=5)
 
-    st.subheader("Veličina")
+element_inner = tk.Frame(element_frame)
+element_inner.pack(anchor="center")
 
-    elements_buttons = {
-        "Teplota": "T",
-        "T přízemní": "TPM",
-        "Vítr avg": "Fprum",
-        "Vítr nárazy": "Fmax",
-        "Srážky": "SRA10M",
-        "Vlhkost": "H"
-    }
+elements_buttons = {
+    "Teplota": "T",
+    "T přízemní": "TPM",
+    "Vítr avg": "Fprum",
+    "Vítr nárazy": "Fmax",
+    "Srážky": "SRA10M",
+    "Vlhkost": "H"
+}
 
-    if "selected_element" not in st.session_state:
-        st.session_state.selected_element = None
+for label, elem in elements_buttons.items():
+    tk.Button(
+        element_inner,
+        text=label,
+        width=8,
+        command=lambda e=elem: plot_region_element(selected_region.get(), e)
+    ).pack(side="left", padx=5, pady=5)
 
-    cols = st.columns(len(elements_buttons))
+# --- Graph frame ---
+graph_frame = tk.Frame(root)
+graph_frame.pack(fill="both", expand=True)
 
-    for i, (label, elem) in enumerate(elements_buttons.items()):
-        if cols[i].button(label):
-            st.session_state.selected_element = elem
-
-    if st.session_state.selected_element:
-        with st.spinner("Načítám data..."):
-            plot_region_element(
-                selected_region,
-                st.session_state.selected_element,
-                regions,
-                stations
-            )
+root.mainloop()
