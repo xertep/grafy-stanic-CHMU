@@ -14,8 +14,8 @@ import re
 
 # Change browser tab title and favicon
 st.set_page_config(
-    page_title="Grafy stanic ČHMÚ",  # this changes the browser tab title
-    page_icon="📈️",                     # optional: emoji or path to an image
+    page_title="Grafy stanic a předpovědi ČHMÚ",  # this changes the browser tab title
+    page_icon="🌤️",                     # optional: emoji or path to an image
     layout="wide"                        # optional: wide layout for cards
 )
 
@@ -722,7 +722,7 @@ def fetch_mountain(mountain_code):
 
 
 # ---------------- UI ----------------
-st.title("ČHMÚ meteostanice 🌦️")
+st.title("ČHMÚ meteostanice a předpovědi počasí 🌦️")
 
 # ---------------- MODE ----------------
 mode = st.radio("Režim", ["Stanice", "Region", "Textové předpovědi"])
@@ -772,7 +772,7 @@ if mode == "Stanice":
 # ---------------- REGION MODE ----------------
 elif mode == "Region":
 
-    st.subheader("Region")
+    st.subheader("Přehled počasí v krajích")
 
     selected_region = st.segmented_control(
         "Region",
@@ -780,7 +780,7 @@ elif mode == "Region":
         default=list(regions.keys())[0]
     )
 
-    st.subheader("Veličina")
+    st.subheader("Prvek")
 
     elements_buttons = {
         "Teplota": "T",
