@@ -729,7 +729,7 @@ def fetch_mountain(mountain_code):
 
 
 # ---------------- UI ----------------
-st.title("ČHMÚ meteostanice a předpovědi počasí 🌦️")
+st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
 mode = st.radio("Režim", ["Stanice", "Region", "Textové předpovědi"])
