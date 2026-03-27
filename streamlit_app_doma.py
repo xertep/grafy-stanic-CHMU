@@ -729,7 +729,7 @@ def fetch_mountain(mountain_code):
 
 
 # ---------------- UI ----------------
-st.title("ČHMÚ meteostanice a předpovědi počasí 🌦️")
+st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
 mode = st.radio("Režim", ["Stanice", "Region", "Textové předpovědi"])
@@ -783,7 +783,7 @@ elif mode == "Region":
     st.subheader("Přehled počasí v krajích")
 
     selected_region = st.segmented_control(
-        "Region",
+        "Kraj",
         list(regions.keys()),
         default=list(regions.keys())[0]
     )
