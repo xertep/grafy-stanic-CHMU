@@ -22,17 +22,19 @@ st.set_page_config(
 # Your app content
 # st.title("Grafy stanic ČHMÚ")
 
-st.markdown(
-    """
-    <style>
-    .block-container {
-        padding-top: 1rem !important;
-        padding-bottom: 0rem !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("""
+<style>
+/* Reduce header but keep functionality */
+header {
+    visibility: visible;
+}
+
+/* Remove extra spacing */
+.block-container {
+    padding-top: 2.5rem !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------- CONFIG ----------------
 elements = ['T', 'TPM', 'Fmax', 'Fprum', 'H', 'SSV10M', 'D', 'P', 'SRA10M', 'SCEa', 'SCE']
