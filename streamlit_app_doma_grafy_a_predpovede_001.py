@@ -729,6 +729,7 @@ mode = st.radio("Režim", ["Stanice", "Region", "Textové předpovědi"])
 
 # ---------------- STATION MODE ----------------
 if mode == "Stanice":
+    st.subheader("Grafy stanic ČHMÚ")
     station_list = list(stations.keys())
     default_station = "Brno, Žabovřesky (B2BZAB01)"
     default_index = station_list.index(default_station) if default_station in station_list else 0
