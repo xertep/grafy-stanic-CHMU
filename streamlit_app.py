@@ -41,8 +41,8 @@ regions = {
             "Lednice"
         ],
         "precip_only": [
-            "Olešnice", "Obora", "Podivice (B1PODI01)", "Bukovinka",
-            "Džbánice (B2DZBA01)", "Střelice", "Šatov (B2SATO01)"
+            "Olešnice", "Obora", "Podivice", "Bukovinka",
+            "Džbánice", "Střelice", "Šatov"
         ]
     },
     "VY": {
@@ -54,7 +54,7 @@ regions = {
             "Moravské Budějovice"
         ],
         "precip_only": [
-            "Habry", "Krucemburk H3KRUC01", "Kadov", "Žďár nad Sázavou",
+            "Habry", "Krucemburk", "Kadov", "Žďár nad Sázavou",
             "Nové Město na Moravě", "Humpolec", "Štoky", "Radostín",
             "Pacov", "Vysoké Studnice", "Kamenice nad Lipou, Vodná", "Třešť",
             "Brtnice", "Nová Ves", "Jemnice", "Náměšť nad Oslavou"
@@ -73,7 +73,7 @@ regions = {
         ],
         "precip_only": [
             "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
-            "Vlkoš (B1VKLO01)", "Staré Hutě", "Hluk"
+            "Vlkoš", "Staré Hutě", "Hluk"
         ]
     }
 }
@@ -364,6 +364,21 @@ def plot_station(df, station_name, elevation):
     st.pyplot(fig, use_container_width=False)
     st.markdown('</div>', unsafe_allow_html=True)
 
+def find_station_wsi(partial_name):
+    exact_match = None
+    partial_match = None
+
+    for full_name, info in stations.items():
+        clean_name = full_name.split(" (")[0]
+
+        if clean_name.lower() == partial_name.lower():
+            exact_match = (full_name, info)
+            break
+
+        if partial_name.lower() in clean_name.lower():
+            partial_match = (full_name, info)
+
+    return exact_match or partial_match or (None, None)
 
 def plot_region_element(region_key, element, regions, stations):
     region = regions[region_key]
@@ -387,12 +402,9 @@ def plot_region_element(region_key, element, regions, stations):
 
     # --- DATA COLLECTION ---
     for station_partial in station_list:
-        matches = [name for name in stations.keys() if station_partial in name]
-        if not matches:
+        station_name, station_info = find_station_wsi(station_partial)
+        if not station_info:
             continue
-
-        station_name = matches[0]
-        station_info = stations[station_name]
 
         wsi = station_info["wsi"]
         if not wsi:
@@ -421,13 +433,28 @@ def plot_region_element(region_key, element, regions, stations):
         st.warning("No data available for this selection")
         return
 
-    # --- COLORS (NO WASTE) ---
+    # --- COLORS ---
     cmap = plt.get_cmap('tab20')
-    colors = cmap(np.linspace(0, 1, len(valid_series)))
+    base_colors = list(cmap.colors)
+
+    extra_colors = [
+        '#ffd700',  # gold
+        '#ff1493',  # deep pink
+        '#00ffff',  # cyan
+        '#000000',  # black
+        '#ff8c00',  # dark orange
+    ]
+
+    colors = base_colors + extra_colors
 
     # --- PLOTTING ---
     for i, ((x, y), label) in enumerate(zip(valid_series, labels)):
-        ax.plot(x, y, label=label, color=colors[i])
+        ax.plot(
+            x,
+            y,
+            label=label,
+            color=colors[i % len(colors)]
+        )
 
     if not all_values or not all_times:
         st.warning("No data available for this selection")
