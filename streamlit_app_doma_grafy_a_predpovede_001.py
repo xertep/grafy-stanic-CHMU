@@ -588,7 +588,7 @@ def get_latest_file(pattern):
     if not matches:
         return None
     matches.sort()
-    return BASE_URL + matches[-1]
+    return BASE_URL_forecasts + matches[-1]
 
 
 def fetch_region(region_code):
