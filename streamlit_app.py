@@ -641,6 +641,19 @@ def fetch_region(region_code):
         except Exception as e:
             st.error(f"Error loading {label}: {e}")
 
+    # --- REMOVE duplicate day (pCK1tx vs pCK2tx) ---
+    if region_code != "CR":
+        pck1 = next((x for x in all_data if x[0] == "pCK1tx"), None)
+        pck2 = next((x for x in all_data if x[0] == "pCK2tx"), None)
+
+        if pck1 and pck2:
+            h1 = " ".join(pck1[1].lower().split())
+            h2 = " ".join(pck2[1].lower().split())
+
+            if h1 == h2:
+                # remove pCK2tx (duplicate day)
+                all_data = [x for x in all_data if x[0] != "pCK2tx"]
+
     if region_code == "CR":
         seen = {}
 
