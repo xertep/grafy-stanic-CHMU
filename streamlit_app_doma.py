@@ -715,6 +715,14 @@ def fetch_region(region_code):
         if pattern == "pCK1tx" and sender:
             output_lines.append(f'<br>Meteorolog: {sender}<br>')
 
+        # --- CR meteorologists ---
+        if region_code == "CR":
+            if pattern == "pCR1tx" and sender:
+                output_lines.append(f'<br>Meteorolog: {sender}<br>')
+
+            if pattern == "pCR8tx" and sender:
+                output_lines.append(f'<br>Meteorolog: {sender}<br>')
+
     for pattern, _, _, sender in reversed(all_data):
         if pattern == "pCK4tx" and sender:
             output_lines.append(f'<br>Meteorolog: {sender}<br>')
