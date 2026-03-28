@@ -641,6 +641,35 @@ def fetch_region(region_code):
         except Exception as e:
             st.error(f"Error loading {label}: {e}")
 
+    if region_code == "CR":
+        seen = {}
+
+        for entry in all_data:
+            pattern, headline_main, items, sender = entry
+
+            if not headline_main:
+                seen[pattern] = entry
+                continue
+
+            key = " ".join(headline_main.lower().split())
+
+            if key in seen:
+                prev_pattern = seen[key][0]
+
+                def get_index(p):
+                    m = re.search(r"pCR(\d+)", p)
+                    return int(m.group(1)) if m else 999
+
+                if get_index(pattern) < get_index(prev_pattern):
+                    seen[key] = entry
+            else:
+                seen[key] = entry
+
+        all_data = list(seen.values())
+
+        order = {p: i for i, (p, _) in enumerate(CR_FORECAST_TYPES)}
+        all_data.sort(key=lambda x: order.get(x[0], 999))
+
     # Build output with HTML for bold and spacing
     output_lines = []
 
