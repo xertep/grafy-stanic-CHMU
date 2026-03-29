@@ -1104,7 +1104,7 @@ elif mode == "Textové předpovědi":
     with st.spinner("Načítám data..."):
 
         if active is None:
-            forecast_placeholder.info("Vyber konkrétní oblast")
+            forecast_placeholder.markdown("Vyber konkrétní oblast")
             st.stop()
 
         kind, value = active
