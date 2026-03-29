@@ -372,7 +372,7 @@ def plot_station(df, station_name, elevation):
     df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
 
     # --- PLOT ---
-    fig, ax_temp_left = plt.subplots(figsize=(16,8), dpi=150)
+    fig, ax_temp_left = plt.subplots(figsize=(16,6), dpi=150)
     ax_temp_left.set_yticks([])
     ax_temp_left.spines['left'].set_visible(False)
 
