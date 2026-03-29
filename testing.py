@@ -1062,6 +1062,7 @@ elif mode == "Textové předpovědi":
     selected_region_label = st.segmented_control(
         "Vyber kraj",
         list(region_map.keys()),
+        key="region_selector"
     )
 
     selected_region = region_map.get(selected_region_label)
@@ -1072,7 +1073,8 @@ elif mode == "Textové předpovědi":
 
     selected_mountain = st.segmented_control(
         "Vyber oblast",
-        list(mountain_map.keys())
+        list(mountain_map.keys()),
+        key="mountain_selector"
     )
 
     # --- Forecast output ---
@@ -1081,9 +1083,13 @@ elif mode == "Textové předpovědi":
     if "forecast_mode" not in st.session_state:
         st.session_state.forecast_mode = None
 
+    # Detect interaction and reset the other control
     if selected_mountain:
+        st.session_state.region_selector = None
         st.session_state.forecast_mode = "mountain"
-    elif selected_region:
+
+    elif selected_region_label:
+        st.session_state.mountain_selector = None
         st.session_state.forecast_mode = "region"
 
     with st.spinner("Načítám data..."):
