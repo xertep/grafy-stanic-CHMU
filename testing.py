@@ -1053,46 +1053,55 @@ elif mode == "Textové předpovědi":
 
     st.subheader("Předpovědi počasí ČHMÚ")
 
-    # --- Regions (Kraje) ---
+    forecast_placeholder = st.empty()
+
+    # --- Regions ---
     st.markdown("### Kraje")
+
     region_codes = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","CR"]
     region_codes_cz = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","ČR"]
+
     region_map = dict(zip(region_codes_cz, region_codes))
 
     selected_region_label = st.segmented_control(
         "Vyber kraj",
         list(region_map.keys()),
+        key="region_sel"
     )
 
     selected_region = region_map.get(selected_region_label)
 
-    # --- Mountains (Horské oblasti) ---
+    # --- Mountains ---
     st.markdown("### Horské oblasti")
+
     mountain_map = {code: code for code, _ in mountains}
 
     selected_mountain = st.segmented_control(
         "Vyber oblast",
-        list(mountain_map.keys())
+        list(mountain_map.keys()),
+        key="mountain_sel"
     )
 
-    # --- Forecast output ---
-    forecast_placeholder = st.empty()
-
-    if "forecast_mode" not in st.session_state:
-        st.session_state.forecast_mode = None
+    # ---------------- SINGLE SOURCE OF TRUTH ----------------
+    active = None
 
     if selected_mountain:
-        st.session_state.forecast_mode = "mountain"
+        active = ("mountain", selected_mountain)
     elif selected_region:
-        st.session_state.forecast_mode = "region"
+        active = ("region", selected_region)
 
+    # ---------------- OUTPUT ----------------
     with st.spinner("Načítám data..."):
-        if st.session_state.forecast_mode == "mountain" and selected_mountain:
-            forecast_html = fetch_mountain(selected_mountain)
-        elif st.session_state.forecast_mode == "region" and selected_region:
-            forecast_html = fetch_region(selected_region)
-        else:
+
+        if active is None:
             forecast_placeholder.info("Vyber kraj nebo horskou oblast")
             st.stop()
+
+        kind, value = active
+
+        if kind == "mountain":
+            forecast_html = fetch_mountain(value)
+        else:
+            forecast_html = fetch_region(value)
 
     forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
