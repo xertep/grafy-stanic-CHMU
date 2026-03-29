@@ -1091,8 +1091,8 @@ elif mode == "Textové předpovědi":
             forecast_html = fetch_mountain(selected_mountain)
         elif st.session_state.forecast_mode == "region" and selected_region:
             forecast_html = fetch_region(selected_region)
-        #else:
-         #   st.info("Vyber kraj nebo horskou oblast")
-          #  st.stop()
+        else:
+            forecast_placeholder.info("Vyber kraj nebo horskou oblast")
+            st.stop()
 
     forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
