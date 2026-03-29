@@ -1055,46 +1055,55 @@ elif mode == "Textové předpovědi":
 
     forecast_placeholder = st.empty()
 
-    # --- Regions ---
-    st.markdown("### Kraje")
-
-    region_codes = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","CR"]
-    region_codes_cz = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","ČR"]
-
-    region_map = dict(zip(region_codes_cz, region_codes))
-
-    selected_region_label = st.segmented_control(
-        "Vyber kraj",
-        list(region_map.keys()),
-        key="region_sel"
+    # ---------------- STEP 1: TYPE ----------------
+    mode_choice = st.segmented_control(
+        "Co chceš zobrazit?",
+        ["Kraje", "Horské oblasti"],
+        key="forecast_type"
     )
 
-    selected_region = region_map.get(selected_region_label)
-
-    # --- Mountains ---
-    st.markdown("### Horské oblasti")
-
-    mountain_map = {code: code for code, _ in mountains}
-
-    selected_mountain = st.segmented_control(
-        "Vyber oblast",
-        list(mountain_map.keys()),
-        key="mountain_sel"
-    )
-
-    # ---------------- SINGLE SOURCE OF TRUTH ----------------
     active = None
 
-    if selected_mountain:
-        active = ("mountain", selected_mountain)
-    elif selected_region:
-        active = ("region", selected_region)
+    # ---------------- REGIONS ----------------
+    if mode_choice == "Kraje":
+
+        st.markdown("### Kraje")
+
+        region_codes = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","CR"]
+        region_codes_cz = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","ČR"]
+
+        region_map = dict(zip(region_codes_cz, region_codes))
+
+        selected_region_label = st.segmented_control(
+            "Vyber kraj",
+            list(region_map.keys()),
+            key="region_sel"
+        )
+
+        if selected_region_label:
+            active = ("region", region_map[selected_region_label])
+
+    # ---------------- MOUNTAINS ----------------
+    elif mode_choice == "Horské oblasti":
+
+        st.markdown("### Horské oblasti")
+
+        mountain_map = {code: code for code, _ in mountains}
+
+        selected_mountain = st.segmented_control(
+            "Vyber oblast",
+            list(mountain_map.keys()),
+            key="mountain_sel"
+        )
+
+        if selected_mountain:
+            active = ("mountain", selected_mountain)
 
     # ---------------- OUTPUT ----------------
     with st.spinner("Načítám data..."):
 
         if active is None:
-            forecast_placeholder.info("Vyber kraj nebo horskou oblast")
+            forecast_placeholder.info("Vyber konkrétní oblast")
             st.stop()
 
         kind, value = active
