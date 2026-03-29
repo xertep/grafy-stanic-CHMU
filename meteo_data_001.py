@@ -43,50 +43,98 @@ BASE_URL = "https://opendata.chmi.cz/meteorology/climate/now/data/"
 
 # --- REGIONS ---
 regions = {
-    "JM": {
+    "KV": {
         "full": [
-            "Tišnov, Hájek", "Protivanov", "Ivanovice na Hané", "Brno, Žabovřesky",
-            "Troubsko", "Brno, Tuřany", "Nemochovice", "Ždánice", "Pohořelice",
-            "Kobylí", "Kuchařovice", "Brod nad Dyjí", "Strážnice", "Dyjákovice",
-            "Lednice"
+            "Dyleň", "Krásné Údolí", "Mariánské Lázně, vodárna",
+            "Aš", "Klínovec", "Karlovy Vary", "Karlovy Vary, Olšová Vrata",
+            "Nejdek", "Šindelová, Obora", "Sokolov"
         ],
         "precip_only": [
-            "Olešnice", "Obora", "Podivice", "Bukovinka",
-            "Džbánice", "Střelice", "Šatov"
+            "Žlutice", "Abertamy", "Bečov nad Teplou",
+            "Kynžvart, Lazy", "Luby", "Stráž nad Ohří"
         ]
     },
-    "VY": {
+    "PL": {
         "full": [
-            "Svratouch", "Nedvězí", "Havlíčkův Brod", "Libice nad Doubravou",
-            "Přibyslav, Hřiště", "Bystřice nad Pernštejnem", "Herálec", "Vatín",
-            "Košetice", "Nový Rychnov", "Hubenov", "Jihlava, Hruškové Dvory",
-            "Velké Meziříčí", "Černovice", "Počátky", "Sedlec", "Dukovany",
-            "Moravské Budějovice"
+            "Horská Kvilda", "Vlkonice", "Domažlice",
+            "Hojsova Stráž", "Klatovy", "Nepomuk",
+            "Plzeň, Bolevec", "Rokycany", "Špičák", "Staňkov",
+            "Konstantinovy Lázně", "Kralovice",
+            "Stříbro", "Tachov", "Zbiroh, Švabín"
         ],
         "precip_only": [
-            "Habry", "Krucemburk", "Kadov", "Žďár nad Sázavou",
-            "Nové Město na Moravě", "Humpolec", "Štoky", "Radostín",
-            "Pacov", "Vysoké Studnice", "Kamenice nad Lipou, Vodná", "Třešť",
-            "Brtnice", "Nová Ves", "Jemnice", "Náměšť nad Oslavou"
+            "Filipova Huť", "Chanovice", "Nalžovské Hory",
+            "Prášily", "Radošice", "Strašín", "Zámyšl",
+            "Borovno, Míšov", "Čachrov", "Česká Kubice",
+            "Horšovský Týn", "Chudenice", "Lovčice, Kvasetice",
+            "Nezvěstice", "Pivoň", "Stod", "Železná Ruda",
+            "Železná", "Bezvěrov", "Staré Sedlo, Darmyšl",
+            "Liblín", "Planá", "Strašice",
+            "Terešov", "Úlice"
         ]
     },
-    "ZL": {
+    "UL": {
         "full": [
-            "Rožnov pod Radhoštěm", "Valašské Meziříčí", "Horní Bečva",
-            "Velké Karlovice", "Bystřice pod Hostýnem", "Kateřinice, Ojičná",
-            "Vsetín", "Hošťálková, Maruška", "Hošťálková", "Holešov",
-            "Kroměříž", "Valašská Senice", "Zlín", "Vizovice",
-            "Luhačovice, Kladná-Žilín", "Bojkovice", "Štítná nad Vláří",
-            "Staré Město", "Strání", "Žítková", "Kašava, pod Rablinů",
-            "Držková", "Nový Hrozenkov, Kohútka", "Velké Karlovice, Benešky",
-            "Horní Bečva, Kudlačena"
+            "Měděnec", "Milešovka", "Nová Ves v Horách",
+            "Smolnice", "Sněžník", "Strojetice",
+            "Teplice", "Ústí nad Labem, Vaňov",
+            "Žatec", "Děčín", "Varnsdorf"
         ],
         "precip_only": [
-            "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
-            "Vlkoš", "Staré Hutě", "Hluk"
+            "Dubí", "Hřivice", "Hrob, Křižanov", "Klíny",
+            "Libochovice, Poplze", "Mašťov",
+            "Měrunice, Žichov", "Milešov",
+            "Petrovice, Krásný Les", "Straškov-Vodochody",
+            "Tisá", "Velká Černoc",
+            "Děčín, Těchlovice", "Lobendava",
+            "Šluknov", "Verneřice"
         ]
     },
-    "JC": {
+    "SC": {
+        "full": [
+            "Rožmitál pod Třemšínem", "Čáslav, Nové město",
+            "Chotusice, letiště", "Poděbrady", "Radovesnice II.",
+            "Zbýšov, Dobrovítov", "Heřmanov", "Dobřichovice",
+            "Kralupy nad Vltavou", "Lány", "Neumětely",
+            "Příbram", "Brandýs nad Labem-St.B",
+            "Dolní Bousov", "Katusice", "Semčice", "Tuhaň",
+            "Nedrahovice, Rudolec", "Ondřejov", "Vavřinec, Žíšov"
+        ],
+        "precip_only": [
+            "Březnice", "Bahno", "Dymokury", "Konárovice",
+            "Kounov", "Karlova Ves", "Rakovník", "Hudlice",
+            "Hvozdec, Mrtník", "Kamýk nad Vltavou",
+            "Slaný", "Voznice", "Zlonice",
+            "Boseň, Mužský", "Kostomlaty nad Labem",
+            "Mšeno", "Káraný", "Benešov",
+            "Řendějov, Nový Samechov", "Svatý Jan",
+            "Horoměřice (Suchdol)", "Veleň, PČOV Miškovice"
+        ]
+    },
+    "PH": {
+        "full": [
+            "Praha, Kbely", "Praha, Klementinum",
+            "Praha, Ruzyně", "Praha, Vinohrady - Flora",
+            "Praha, Komořany"
+        ],
+        "precip_only": [
+            "Praha, Břevnov", "Praha, Běchovice",
+            "Praha, Břevnov (Vypich)", "Praha, Bubeneč (F0 ÚČOV)",
+            "Praha, Ďáblice (Ládví)", "Praha, Dubeč (PČOV Uhříněves)",
+            "Praha, Hlubočepy (Barrandov)",
+            "Praha, Horní Měcholupy (Kozinec)",
+            "Praha, Horní Počernice", "Praha, Chodov",
+            "Praha, Jinonice (Vidoule)", "Praha, Karlov",
+            "Praha, Kyje", "Praha, Libeň (Prosek)",
+            "Praha, Michle (Zelená Liška)",
+            "Praha, Modřany sever II", "Praha, Radotín",
+            "Praha, Řepy", "Praha, Stodůlky (Kopanina)",
+            "Praha, Střešovice (Bruska)",
+            "Praha, Vinohrady (Flora)",
+            "Praha, Žižkov (Hrdlořezy)"
+        ]
+    },
+    "CB": {
         "full": [
             "Borová Lada", "Černá v Pošumaví", "Husinec", "Ktiš, Tisovka",
             "Kvilda", "Sedlice", "Strakonice, Nové Strakonice", "Temelín, MW332",
@@ -105,41 +153,6 @@ regions = {
             "Netřebice", "Olší", "Pohorská Ves", "Staré Hutě",
             "Strmilov", "Stráž nad Nežárkou", "Trhové Sviny",
             "Mladá Vožice"
-        ]
-    },
-    "KV": {
-        "full": [
-            "Dyleň", "Krásné Údolí", "Mariánské Lázně, vodárna",
-            "Aš", "Klínovec", "Karlovy Vary, Olšová Vrata",
-            "Nejdek", "Šindelová, Obora", "Sokolov"
-        ],
-        "precip_only": [
-            "Žlutice", "Abertamy", "Bečov nad Teplou",
-            "Kynžvart, Lazy", "Luby", "Stráž nad Ohří"
-        ]
-    },
-    "HK": {
-        "full": [
-            "Česká Skalice, Rozkoš", "Labská bouda", "Luční bouda",
-            "Teplice nad Metují Zdoňov", "Trutnov", "Úpice",
-            "Velichovky", "Vrchlabí", "Žacléř", "Borohrádek",
-            "Deštné v Orlic. horách", "Orlické Záhoří - Vodárna",
-            "Polom, Sedloňov", "Rokytnice v Orlic.horách",
-            "Rychnov nad Kněžnou", "Broumov", "Holovousy",
-            "Hradec Králové, Nový Hradec Králové", "Jičín",
-            "Lázně Bělohrad", "Nový Bydžov",
-            "Hradec Králové, Svobodné Dvory",
-            "Adršpach, Horní Adršpach"
-        ],
-        "precip_only": [
-            "Černý Důl", "Dolní Dvůr, Rudolfov", "Horní Maršov",
-            "Hostinné", "Police nad Metují",
-            "Pomezní boudy, Horní Malá Úpa", "Strážné",
-            "Bílý Újezd, Hroška", "České Meziříčí",
-            "Luisino údolí, Deštné v Orlických horách",
-            "Olešnice, Čihálka", "Olešnice, Vodárna",
-            "Slatina nad Zdobnicí", "Zdobnice", "Božanov",
-            "Libáň", "Slatiny, Milíčeves"
         ]
     },
     "LB": {
@@ -166,17 +179,57 @@ regions = {
             "Hejnice, Smědavská hora"
         ]
     },
-    "MS": {
+    "HK": {
         "full": [
-            "Bílá, Konečná", "Bohumín, Záblatí",
-            "Frýdek-Místek, Místek", "Frenštát pod Radhoštěm",
-            "Slezská Harta", "Horní Lomná", "Jablunkov, Návsí",
-            "Karviná", "Karlova Studánka", "Krnov",
-            "Lučina", "Mořkov", "Mošnov",
-            "Opava, Otice", "Ostrava, Poruba",
-            "Ropice", "Světlá Hora", "Vítkov"
+            "Česká Skalice, Rozkoš", "Labská bouda", "Luční bouda",
+            "Teplice nad Metují Zdoňov", "Trutnov", "Úpice",
+            "Velichovky", "Vrchlabí", "Žacléř", "Borohrádek",
+            "Deštné v Orlic. horách", "Orlické Záhoří - Vodárna",
+            "Polom, Sedloňov", "Rokytnice v Orlic.horách",
+            "Rychnov nad Kněžnou", "Broumov", "Holovousy",
+            "Hradec Králové, Nový Hradec Králové", "Jičín",
+            "Lázně Bělohrad", "Nový Bydžov",
+            "Hradec Králové, Svobodné Dvory",
+            "Adršpach, Horní Adršpach"
         ],
-        "precip_only": ["Karlovice", "Lichnov", "Lomnice"]
+        "precip_only": [
+            "Černý Důl", "Dolní Dvůr, Rudolfov", "Horní Maršov",
+            "Hostinné", "Police nad Metují",
+            "Pomezní boudy, Horní Malá Úpa", "Strážné",
+            "Bílý Újezd, Hroška", "České Meziříčí",
+            "Luisino údolí, Deštné v Orlických horách",
+            "Olešnice, Čihálka", "Olešnice, Vodárna",
+            "Slatina nad Zdobnicí", "Zdobnice", "Božanov",
+            "Libáň", "Slatiny, Milíčeves"
+        ]
+    },
+    "PU": {
+        "full": [
+            "Nedvězí", "Králíky", "Žamberk", "Gajer, Janov",
+            "Hrušová", "Mokošín", "Pardubice, letiště",
+            "Seč", "Skuteč", "Jevíčko", "Třebařov"
+        ],
+        "precip_only": [
+            "Hradec nad Svitavou", "Polička", "Choceň",
+            "Orličky", "Heřmanův Městec",
+            "Hrochův Týnec", "Lubná", "Nové Hrady",
+            "Červená Voda"
+        ]
+    },
+    "VY": {
+        "full": [
+            "Svratouch", "Nedvězí", "Havlíčkův Brod", "Libice nad Doubravou",
+            "Přibyslav, Hřiště", "Bystřice nad Pernštejnem", "Herálec", "Vatín",
+            "Košetice", "Nový Rychnov", "Hubenov", "Jihlava, Hruškové Dvory",
+            "Velké Meziříčí", "Černovice", "Počátky", "Sedlec", "Dukovany",
+            "Moravské Budějovice"
+        ],
+        "precip_only": [
+            "Habry", "Krucemburk", "Kadov", "Žďár nad Sázavou",
+            "Nové Město na Moravě", "Humpolec", "Štoky", "Radostín",
+            "Pacov", "Vysoké Studnice", "Kamenice nad Lipou, Vodná", "Třešť",
+            "Brtnice", "Nová Ves", "Jemnice", "Náměšť nad Oslavou"
+        ]
     },
     "OL": {
         "full": [
@@ -194,96 +247,44 @@ regions = {
             "Hoštejn", "Velké Losiny", "Oskava"
         ]
     },
-    "PU": {
+    "JM": {
         "full": [
-            "Nedvězí", "Králíky", "Žamberk", "Gajer, Janov",
-            "Hrušová", "Mokošín", "Pardubice, letiště",
-            "Seč", "Skuteč", "Jevíčko", "Třebařov"
+            "Tišnov, Hájek", "Protivanov", "Ivanovice na Hané", "Brno, Žabovřesky",
+            "Troubsko", "Brno, Tuřany", "Nemochovice", "Ždánice", "Pohořelice",
+            "Kobylí", "Kuchařovice", "Brod nad Dyjí", "Strážnice", "Dyjákovice",
+            "Lednice"
         ],
         "precip_only": [
-            "Hradec nad Svitavou", "Polička", "Choceň",
-            "Orličky", "Heřmanův Městec",
-            "Hrochův Týnec", "Lubná", "Nové Hrady",
-            "Červená Voda"
+            "Olešnice", "Obora", "Podivice", "Bukovinka",
+            "Džbánice", "Střelice", "Šatov"
         ]
     },
-    "PL": {
+    "MS": {
         "full": [
-            "Horská Kvilda", "Vlkonice", "Domažlice",
-            "Hojsova Stráž", "Klatovy", "Nepomuk",
-            "Plzeň, Bolevec", "Špičák", "Staňkov",
-            "Konstantinovy Lázně", "Kralovice",
-            "Stříbro", "Tachov", "Zbiroh, Švabín"
+            "Bílá, Konečná", "Bohumín, Záblatí",
+            "Frýdek-Místek, Místek", "Frenštát pod Radhoštěm",
+            "Slezská Harta", "Horní Lomná", "Jablunkov, Návsí",
+            "Karviná", "Karlova Studánka", "Krnov",
+            "Lučina", "Mořkov", "Mošnov",
+            "Opava, Otice", "Ostrava, Poruba",
+            "Ropice", "Světlá Hora", "Vítkov"
         ],
-        "precip_only": [
-            "Filipova Huť", "Chanovice", "Nalžovské Hory",
-            "Prášily", "Radošice", "Strašín", "Zámyšl",
-            "Borovno, Míšov", "Čachrov", "Česká Kubice",
-            "Horšovský Týn", "Chudenice", "Lovčice, Kvasetice",
-            "Nezvěstice", "Pivoň", "Stod", "Železná Ruda",
-            "Železná", "Bezvěrov", "Staré Sedlo, Darmyšl",
-            "Liblín", "Planá", "Rokycany", "Strašice",
-            "Terešov", "Úlice"
-        ]
+        "precip_only": ["Karlovice", "Lichnov", "Lomnice"]
     },
-    "PH": {
+    "ZL": {
         "full": [
-            "Praha, Kbely", "Praha, Klementinum",
-            "Praha, Ruzyně", "Praha, Vinohrady - Flora"
+            "Rožnov pod Radhoštěm", "Valašské Meziříčí", "Horní Bečva",
+            "Velké Karlovice", "Bystřice pod Hostýnem", "Kateřinice, Ojičná",
+            "Vsetín", "Hošťálková, Maruška", "Hošťálková", "Holešov",
+            "Kroměříž", "Valašská Senice", "Zlín", "Vizovice",
+            "Luhačovice, Kladná-Žilín", "Bojkovice", "Štítná nad Vláří",
+            "Staré Město", "Strání", "Žítková", "Kašava, pod Rablinů",
+            "Držková", "Nový Hrozenkov, Kohútka", "Velké Karlovice, Benešky",
+            "Horní Bečva, Kudlačena"
         ],
         "precip_only": [
-            "Praha, Břevnov", "Praha, Běchovice",
-            "Praha, Břevnov (Vypich)", "Praha, Bubeneč (F0 ÚČOV)",
-            "Praha, Ďáblice (Ládví)", "Praha, Dubeč (PČOV Uhříněves)",
-            "Praha, Hlubočepy (Barrandov)",
-            "Praha, Horní Měcholupy (Kozinec)",
-            "Praha, Horní Počernice", "Praha, Chodov",
-            "Praha, Jinonice (Vidoule)", "Praha, Karlov",
-            "Praha, Kyje", "Praha, Libeň (Prosek)",
-            "Praha, Michle (Zelená Liška)",
-            "Praha, Modřany sever II", "Praha, Radotín",
-            "Praha, Řepy", "Praha, Stodůlky (Kopanina)",
-            "Praha, Střešovice (Bruska)",
-            "Praha, Vinohrady (Flora)",
-            "Praha, Žižkov (Hrdlořezy)"
-        ]
-    },
-    "SC": {
-        "full": [
-            "Rožmitál pod Třemšínem", "Čáslav, Nové město",
-            "Chotusice, letiště", "Poděbrady", "Radovesnice II.",
-            "Zbýšov, Dobrovítov", "Heřmanov", "Dobřichovice",
-            "Kralupy nad Vltavou", "Lány", "Neumětely",
-            "Příbram", "Brandýs nad Labem-St.B",
-            "Dolní Bousov", "Katusice", "Semčice", "Tuhaň",
-            "Nedrahovice, Rudolec", "Ondřejov", "Vavřinec, Žíšov"
-        ],
-        "precip_only": [
-            "Březnice", "Bahno", "Dymokury", "Konárovice",
-            "Kounov", "Karlova Ves", "Rakovník", "Hudlice",
-            "Hvozdec, Mrtník", "Kamýk nad Vltavou",
-            "Slaný", "Voznice", "Zlonice",
-            "Boseň, Mužský", "Kostomlaty nad Labem",
-            "Mšeno", "Káraný", "Benešov",
-            "Řendějov, Nový Samechov", "Svatý Jan",
-            "Horoměřice (Suchdol)", "Veleň, PČOV Miškovice"
-        ]
-    },
-    "US": {
-        "full": [
-            "Měděnec", "Milešovka", "Nová Ves v Horách",
-            "Smolnice", "Sněžník", "Strojetice",
-            "Teplice", "Ústí nad Labem, Vaňov",
-            "Žatec", "Děčín", "Varnsdorf"
-        ],
-        "precip_only": [
-            "Dubí", "Hřivice", "Hrob, Křižanov", "Klíny",
-            "Libochovice, Poplze", "Mašťov",
-            "Měrunice, Žichov", "Milešov",
-            "Petrovice, Krásný Les", "Straškov-Vodochody",
-            "Tisá", "Velká Černoc",
-            "Děčín, Těchlovice", "Lobendava",
-            "Šluknov", "Verneřice"
+            "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
+            "Vlkoš", "Staré Hutě", "Hluk"
         ]
     }
 }
