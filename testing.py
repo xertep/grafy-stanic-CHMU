@@ -1062,7 +1062,7 @@ elif mode == "Textové předpovědi":
     selected_region_label = st.segmented_control(
         "Vyber kraj",
         list(region_map.keys()),
-        default="ČR"
+        # default="ČR"
     )
 
     selected_region = region_map[selected_region_label]
