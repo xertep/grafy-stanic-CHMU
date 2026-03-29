@@ -409,7 +409,7 @@ def plot_station(df, station_name, elevation):
                 y=y,
                 color='lightblue',
                 linestyle='--',
-                linewidth=1.0,
+                linewidth=0.9,
                 alpha=1.0,
                 zorder=0
             )
@@ -426,7 +426,7 @@ def plot_station(df, station_name, elevation):
     current_time = start_time.replace(minute=0, second=0, microsecond=0)
     current_time -= pd.Timedelta(hours=current_time.hour % 4)
     while current_time <= end_time:
-        if ax_temp: ax_temp.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=1.0, alpha=1.0, zorder=0)
+        if ax_temp: ax_temp.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=0.9, alpha=1.0, zorder=0)
         current_time += pd.Timedelta(hours=4)
 
     def custom_time_formatter(x, pos):
@@ -765,16 +765,16 @@ MOUNTAIN_FORECAST_TYPES = [
 ]
 
 mountains = [
-    ("VY", "Žďárské vrchy"),
-    ("ZL", "Javorníky a Bílé Karpaty"),
+    ("PL", "Český a Slavkovský les"),
+    ("UL", "Krušné hory"),
+    ("LB", "Jizerské hory"),
     ("CB", "Šumava a Novohradské hory"),
     ("HK", "Krkonoše"),
-    ("LB", "Jizerské hory"),
-    ("MT", "Beskydy"),
-    ("OL", "Jeseníky a Králický Sněžník"),
-    ("PL", "Český a Slavkovský les"),
     ("PU", "Orlické hory"),
-    ("UL", "Krušné hory"),
+    ("VY", "Žďárské vrchy"),
+    ("ZL", "Javorníky a Bílé Karpaty"),
+    ("OL", "Jeseníky a Králický Sněžník"),
+    ("MT", "Beskydy"),
 ]
 
 # Example region colors
@@ -1053,7 +1053,7 @@ elif mode == "Textové předpovědi":
     st.subheader("Předpovědi počasí ČHMÚ")
 
     # --- Colors ---
-    main_region_colors = {"JM": "#ffc0cb", "ZL": "#98fb98", "VY": "#87ceeb", "CR": "#ffd700"}
+    main_region_colors = {"JM": "#eeeeee", "ZL": "#eeeeee", "VY": "#eeeeee", "CR": "#ffd700"}
     other_region_colors = {
         "CB":"#eeeeee", "HK":"#eeeeee", "KV":"#eeeeee", "LB":"#eeeeee",
         "MS":"#eeeeee", "OL":"#eeeeee", "PH":"#eeeeee", "PL":"#eeeeee",
@@ -1062,8 +1062,8 @@ elif mode == "Textové předpovědi":
 
     # --- Regions (Kraje) ---
     st.markdown("### Kraje")
-    region_codes = ["JM","ZL","VY","CR","CB","HK","KV","LB","MS","OL","PH","PL","PU","SC","UL"]
-    region_codes_cz = ["JM","ZL","VY","ČR","CB","HK","KV","LB","MS","OL","PH","PL","PU","SC","UL"]
+    region_codes = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","CR"]
+    region_codes_cz = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","ČR"]
     selected_region = None
 
     for row_idx, row in enumerate([list(zip(region_codes, region_codes_cz))[i:i+15] for i in range(0, len(region_codes), 15)]):
