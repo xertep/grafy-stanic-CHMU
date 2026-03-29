@@ -1053,84 +1053,46 @@ elif mode == "Textové předpovědi":
 
     st.subheader("Předpovědi počasí ČHMÚ")
 
-    # --- Colors ---
-    main_region_colors = {"JM": "#eeeeee", "ZL": "#eeeeee", "VY": "#eeeeee", "CR": "#ffd700"}
-    other_region_colors = {
-        "CB":"#eeeeee", "HK":"#eeeeee", "KV":"#eeeeee", "LB":"#eeeeee",
-        "MS":"#eeeeee", "OL":"#eeeeee", "PH":"#eeeeee", "PL":"#eeeeee",
-        "PU":"#eeeeee", "SC":"#eeeeee", "UL":"#eeeeee"
-    }
-
     # --- Regions (Kraje) ---
     st.markdown("### Kraje")
     region_codes = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","CR"]
     region_codes_cz = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","ČR"]
-    selected_region = None
+    region_map = dict(zip(region_codes_cz, region_codes))
 
-    for row_idx, row in enumerate([list(zip(region_codes, region_codes_cz))[i:i+15] for i in range(0, len(region_codes), 15)]):
-        cols = st.columns(len(row))
-        for col_idx, (col, (code, label)) in enumerate(zip(cols, row)):
-            color = main_region_colors.get(code, other_region_colors.get(code, "#eeeeee"))
+    selected_region_label = st.segmented_control(
+        "Vyber kraj",
+        list(region_map.keys()),
+    )
 
-            container_key = f"region_container_{code}_{row_idx}_{col_idx}"
-
-            with col:
-                with stylable_container(
-                    container_key,
-                    css_styles=f"""
-                    button {{
-                        background-color: {color};
-                        color: black;
-                        height: 40px;
-                        width: 100%;
-                        min-width: 85px;
-                        font-size: 18px;
-                        font-weight: 600;
-                        border-radius: 12px;
-                        margin-bottom: 8px;
-                    }}
-                    """
-                ):
-                    if st.button(label, key=f"region_{code}"):  # 👈 HERE
-                        selected_region = code  # 👈 still uses original code
+    selected_region = region_map.get(selected_region_label)
 
     # --- Mountains (Horské oblasti) ---
     st.markdown("### Horské oblasti")
-    selected_mountain = None
-    mountain_codes = [code for code, _ in mountains]
+    mountain_map = {code: code for code, _ in mountains}
 
-    for row_idx, row in enumerate([mountain_codes[i:i+10] for i in range(0, len(mountain_codes), 10)]):
-        cols = st.columns(len(row))
-        for col_idx, (col, code) in enumerate(zip(cols, row)):
-            container_key = f"mountain_container_{code}_{row_idx}_{col_idx}"
-            with col:
-                with stylable_container(
-                    container_key,
-                    css_styles=f"""
-                    button {{
-                        background-color: #bbbbbb;
-                        color: black;
-                        height: 40px;
-                        width: 100%;
-                        min-width: 70px;
-                        font-size: 18px;
-                        font-weight: 600;
-                        border-radius: 12px;
-                        margin-bottom: 16px;
-                    }}
-                    """
-                ):
-                    if st.button(code, key=f"mountain_{code}"):
-                        selected_mountain = code
+    selected_mountain = st.segmented_control(
+        "Vyber oblast",
+        list(mountain_map.keys())
+    )
 
     # --- Forecast output ---
     forecast_placeholder = st.empty()
 
+    if "forecast_mode" not in st.session_state:
+        st.session_state.forecast_mode = None
+
     if selected_mountain:
-        with st.spinner("Načítám data..."):
-            forecast_html = fetch_mountain(selected_mountain)
-            forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
+        st.session_state.forecast_mode = "mountain"
     elif selected_region:
-        with st.spinner("Načítám data..."):
+        st.session_state.forecast_mode = "region"
+
+    with st.spinner("Načítám data..."):
+        if st.session_state.forecast_mode == "mountain" and selected_mountain:
+            forecast_html = fetch_mountain(selected_mountain)
+        elif st.session_state.forecast_mode == "region" and selected_region:
             forecast_html = fetch_region(selected_region)
-            forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
+        #else:
+         #   st.info("Vyber kraj nebo horskou oblast")
+          #  st.stop()
+
+    forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
