@@ -85,7 +85,7 @@ regions = {
             "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
             "Vlkoš", "Staré Hutě", "Hluk"
         ]
-    }
+    },
     "JC": {
         "full": [
             "Borová Lada", "Černá v Pošumaví", "Husinec", "Ktiš, Tisovka",
