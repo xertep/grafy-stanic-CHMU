@@ -1067,7 +1067,7 @@ elif mode == "Textové předpovědi":
 
     selected_region = region_map.get(selected_region_label)
 
-    # --- Mountains (Horské oblasti) ---
+    # --- Mountains ---
     st.markdown("### Horské oblasti")
     mountain_map = {code: code for code, _ in mountains}
 
@@ -1077,28 +1077,23 @@ elif mode == "Textové předpovědi":
         key="mountain_selector"
     )
 
-    # --- Forecast output ---
     forecast_placeholder = st.empty()
 
-    if "forecast_mode" not in st.session_state:
-        st.session_state.forecast_mode = None
-
-    # Detect interaction and reset the other control
+    # --- MUTUAL EXCLUSION ---
     if selected_mountain:
-        st.session_state.region_selector = None
-        st.session_state.forecast_mode = "mountain"
+        if "region_selector" in st.session_state:
+            del st.session_state["region_selector"]
 
-    elif selected_region_label:
-        st.session_state.mountain_selector = None
-        st.session_state.forecast_mode = "region"
+        forecast_html = fetch_mountain(selected_mountain)
 
-    with st.spinner("Načítám data..."):
-        if st.session_state.forecast_mode == "mountain" and selected_mountain:
-            forecast_html = fetch_mountain(selected_mountain)
-        elif st.session_state.forecast_mode == "region" and selected_region:
-            forecast_html = fetch_region(selected_region)
-        else:
-            forecast_placeholder.info("Vyber kraj nebo horskou oblast")
-            st.stop()
+    elif selected_region:
+        if "mountain_selector" in st.session_state:
+            del st.session_state["mountain_selector"]
+
+        forecast_html = fetch_region(selected_region)
+
+    else:
+        forecast_placeholder.info("Vyber kraj nebo horskou oblast")
+        st.stop()
 
     forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
