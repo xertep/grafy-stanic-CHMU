@@ -1062,10 +1062,9 @@ elif mode == "Textové předpovědi":
     selected_region_label = st.segmented_control(
         "Vyber kraj",
         list(region_map.keys()),
-        # default="ČR"
     )
 
-    selected_region = region_map[selected_region_label]
+    selected_region = region_map.get(selected_region_label)
 
     # --- Mountains (Horské oblasti) ---
     st.markdown("### Horské oblasti")
@@ -1079,10 +1078,21 @@ elif mode == "Textové předpovědi":
     # --- Forecast output ---
     forecast_placeholder = st.empty()
 
+    if "forecast_mode" not in st.session_state:
+        st.session_state.forecast_mode = None
+
+    if selected_mountain:
+        st.session_state.forecast_mode = "mountain"
+    elif selected_region:
+        st.session_state.forecast_mode = "region"
+
     with st.spinner("Načítám data..."):
-        if selected_mountain:
+        if st.session_state.forecast_mode == "mountain" and selected_mountain:
             forecast_html = fetch_mountain(selected_mountain)
-        else:
+        elif st.session_state.forecast_mode == "region" and selected_region:
             forecast_html = fetch_region(selected_region)
+        else:
+            st.info("Vyber kraj nebo horskou oblast")
+            st.stop()
 
     forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
