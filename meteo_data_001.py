@@ -372,7 +372,7 @@ def plot_station(df, station_name, elevation):
     df_pivot = df.pivot(index='DT', columns='ELEMENT', values='VAL')
 
     # --- PLOT ---
-    fig, ax_temp_left = plt.subplots(figsize=(16,6), dpi=150)
+    fig, ax_temp_left = plt.subplots(figsize=(16,8), dpi=150)
     ax_temp_left.set_yticks([])
     ax_temp_left.spines['left'].set_visible(False)
 
@@ -409,7 +409,7 @@ def plot_station(df, station_name, elevation):
                 y=y,
                 color='lightblue',
                 linestyle='--',
-                linewidth=0.8,
+                linewidth=1.0,
                 alpha=1.0,
                 zorder=0
             )
@@ -426,7 +426,7 @@ def plot_station(df, station_name, elevation):
     current_time = start_time.replace(minute=0, second=0, microsecond=0)
     current_time -= pd.Timedelta(hours=current_time.hour % 4)
     while current_time <= end_time:
-        if ax_temp: ax_temp.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=0.8, alpha=1.0, zorder=0)
+        if ax_temp: ax_temp.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=1.0, alpha=1.0, zorder=0)
         current_time += pd.Timedelta(hours=4)
 
     def custom_time_formatter(x, pos):
