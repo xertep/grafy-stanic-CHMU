@@ -209,7 +209,7 @@ def plot_station(df, station_name, elevation):
                 y=y,
                 color='lightblue',
                 linestyle='--',
-                linewidth=0.5,
+                linewidth=1.0,
                 alpha=1.0,
                 zorder=0
             )
@@ -226,7 +226,7 @@ def plot_station(df, station_name, elevation):
     current_time = start_time.replace(minute=0, second=0, microsecond=0)
     current_time -= pd.Timedelta(hours=current_time.hour % 4)
     while current_time <= end_time:
-        if ax_temp: ax_temp.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=0.5, alpha=1.0, zorder=0)
+        if ax_temp: ax_temp.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=1.0, alpha=1.0, zorder=0)
         current_time += pd.Timedelta(hours=4)
 
     def custom_time_formatter(x, pos):
@@ -500,7 +500,7 @@ def plot_region_element(region_key, element, regions, stations):
         y_end = math.ceil(ymax / step) * step
 
         for y in np.arange(y_start, y_end + step, step):
-            ax.axhline(y=y, color='lightblue', linestyle='--', linewidth=0.5)
+            ax.axhline(y=y, color='lightblue', linestyle='--', linewidth=0.9)
 
     # --- X-axis ---
     end_time = max(all_times)
@@ -511,7 +511,7 @@ def plot_region_element(region_key, element, regions, stations):
     current_time -= pd.Timedelta(hours=current_time.hour % 4)
 
     while current_time <= end_time:
-        ax.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=0.5)
+        ax.axvline(x=current_time, color='lightblue', linestyle='--', linewidth=0.9)
         current_time += pd.Timedelta(hours=4)
 
     def custom_time_formatter(x, pos):
