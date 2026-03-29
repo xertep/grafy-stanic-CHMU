@@ -1053,9 +1053,7 @@ elif mode == "Textové předpovědi":
 
     st.subheader("Předpovědi počasí ČHMÚ")
 
-    forecast_placeholder = st.empty()
-
-    # ---------------- STEP 1: TYPE ----------------
+    # ---------------- STEP 1 ----------------
     mode_choice = st.segmented_control(
         "Co chceš zobrazit?",
         ["Kraje", "Horské oblasti"],
@@ -1098,6 +1096,9 @@ elif mode == "Textové předpovědi":
 
         if selected_mountain:
             active = ("mountain", selected_mountain)
+
+    # 👇 MOVE PLACEHOLDER HERE (IMPORTANT)
+    forecast_placeholder = st.empty()
 
     # ---------------- OUTPUT ----------------
     with st.spinner("Načítám data..."):
