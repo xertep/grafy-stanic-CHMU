@@ -10,6 +10,12 @@ from matplotlib.cm import get_cmap
 from streamlit_extras.stylable_container import stylable_container
 import re
 
+# ---------------- STATE INIT (TOP OF APP) ----------------
+if "selected_element" not in st.session_state:
+    st.session_state.selected_element = None
+
+if "region_run" not in st.session_state:
+    st.session_state.region_run = False
 
 
 # Change browser tab title and favicon
@@ -779,15 +785,30 @@ def fetch_mountain(mountain_code):
 
 
 # ---------------- UI ----------------
-st.title("ČHMÚ meteostanice a předpovědi počasí 🌦️")
+st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
-mode = st.radio("Režim", ["Stanice", "Region", "Textové předpovědi"])
+mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi"])
+
+if "last_mode" not in st.session_state:
+    st.session_state.last_mode = None
+
+if st.session_state.last_mode != mode:
+
+    # leaving Region → always reset region state
+    if st.session_state.last_mode == "Region":
+        st.session_state.selected_element = None
+        st.session_state.region_run = False
+
+    st.session_state.last_mode = mode
 
 # ---------------- STATION MODE ----------------
 if mode == "Stanice":
-    st.subheader("Grafy stanic ČHMÚ")
+
+    st.subheader("Graf vybrané stanice")
+
     station_list = list(stations.keys())
+
     default_station = "Brno, Žabovřesky (B2BZAB01)"
     default_index = station_list.index(default_station) if default_station in station_list else 0
 
@@ -816,16 +837,25 @@ if mode == "Stanice":
         if st.button("Brno, Žabovřesky"):
             st.session_state.chosen_station = "Brno, Žabovřesky (B2BZAB01)"
 
-    # --- Plot section (full width) ---
-    if st.session_state.chosen_station:
-        chosen_station = st.session_state.chosen_station
-        station_info = stations[chosen_station]
+    # 👇 PLACEHOLDER HERE (after button!)
+    station_placeholder = st.empty()
+
+    if show_data:
+        station_info = stations[station_name]
         wsi = station_info["wsi"]
         elevation = station_info["elevation"]
 
         with st.spinner("Načítám data..."):
             df = fetch_station_data(wsi)
-        plot_station(df, chosen_station, elevation)
+
+        with station_placeholder.container():
+            plot_station(df, station_name, elevation)
+
+    else:
+        station_placeholder.markdown(
+            "<p style='color:#777;'>Zobrazí graf vybrané stanice</p>",
+            unsafe_allow_html=True
+        )
 
 # ---------------- REGION MODE ----------------
 elif mode == "Region":
@@ -833,12 +863,10 @@ elif mode == "Region":
     st.subheader("Přehled počasí v krajích")
 
     selected_region = st.segmented_control(
-        "Region",
+        "Kraj",
         list(regions.keys()),
         default=list(regions.keys())[0]
     )
-
-    st.subheader("Prvek")
 
     elements_buttons = {
         "Teplota": "T",
@@ -849,107 +877,114 @@ elif mode == "Region":
         "Vlhkost": "H"
     }
 
-    if "selected_element" not in st.session_state:
-        st.session_state.selected_element = None
+    selected_element_label = st.segmented_control(
+        "Prvek",
+        list(elements_buttons.keys()),
+        key="region_element_selector"
+    )
 
-    cols = st.columns(len(elements_buttons))
+    selected_element = elements_buttons.get(selected_element_label)
 
-    for i, (label, elem) in enumerate(elements_buttons.items()):
-        if cols[i].button(label):
-            st.session_state.selected_element = elem
+    # 👇 INIT
+    if "region_run" not in st.session_state:
+        st.session_state.region_run = False
 
-    if st.session_state.selected_element:
+    if "last_selected_element" not in st.session_state:
+        st.session_state.last_selected_element = None
+
+    # 👇 Detect CHANGE (this is the key)
+    if selected_element != st.session_state.last_selected_element:
+        st.session_state.region_run = True
+        st.session_state.last_selected_element = selected_element
+
+    region_placeholder = st.empty()
+
+    # ---------------- OUTPUT ----------------
+    if st.session_state.region_run and selected_element:
+
         with st.spinner("Načítám data..."):
             plot_region_element(
                 selected_region,
-                st.session_state.selected_element,
+                selected_element,
                 regions,
                 stations
             )
+
+        st.session_state.region_run = False
+
+    else:
+        region_placeholder.markdown(
+            "<p style='color:#777;'>Zobrazí vybraný prvek pro všechny dostupné stanice v kraji do jednoho grafu</p>",
+            unsafe_allow_html=True
+        )
 
 # ---------------- FORECAST MODE ----------------
 elif mode == "Textové předpovědi":
 
     st.subheader("Předpovědi počasí ČHMÚ")
 
-    # --- Colors ---
-    main_region_colors = {"JM": "#ffc0cb", "ZL": "#98fb98", "VY": "#87ceeb", "CR": "#ffd700"}
-    other_region_colors = {
-        "CB":"#eeeeee", "HK":"#eeeeee", "KV":"#eeeeee", "LB":"#eeeeee",
-        "MS":"#eeeeee", "OL":"#eeeeee", "PH":"#eeeeee", "PL":"#eeeeee",
-        "PU":"#eeeeee", "SC":"#eeeeee", "UL":"#eeeeee"
-    }
+    # ---------------- STEP 1 ----------------
+    mode_choice = st.segmented_control(
+        "Co chceš zobrazit?",
+        ["Kraje a ČR", "Horské oblasti"],
+        key="forecast_type"
+    )
 
-    # --- Regions (Kraje) ---
-    st.markdown("### Kraje")
-    region_codes = ["JM","ZL","VY","CR","CB","HK","KV","LB","MS","OL","PH","PL","PU","SC","UL"]
-    region_codes_cz = ["JM","ZL","VY","ČR","CB","HK","KV","LB","MS","OL","PH","PL","PU","SC","UL"]
-    selected_region = None
+    active = None
 
-    for row_idx, row in enumerate([list(zip(region_codes, region_codes_cz))[i:i+15] for i in range(0, len(region_codes), 15)]):
-        cols = st.columns(len(row))
-        for col_idx, (col, (code, label)) in enumerate(zip(cols, row)):
-            color = main_region_colors.get(code, other_region_colors.get(code, "#eeeeee"))
+    # ---------------- REGIONS ----------------
+    if mode_choice == "Kraje a ČR":
 
-            container_key = f"region_container_{code}_{row_idx}_{col_idx}"
+        st.markdown("### Kraje a ČR")
 
-            with col:
-                with stylable_container(
-                    container_key,
-                    css_styles=f"""
-                    button {{
-                        background-color: {color};
-                        color: black;
-                        height: 40px;
-                        width: 100%;
-                        min-width: 85px;
-                        font-size: 18px;
-                        font-weight: 600;
-                        border-radius: 12px;
-                        margin-bottom: 8px;
-                    }}
-                    """
-                ):
-                    if st.button(label, key=f"region_{code}"):  # 👈 HERE
-                        selected_region = code  # 👈 still uses original code
+        region_codes = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","CR"]
+        region_codes_cz = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","ČR"]
 
-    # --- Mountains (Horské oblasti) ---
-    st.markdown("### Horské oblasti")
-    selected_mountain = None
-    mountain_codes = [code for code, _ in mountains]
+        region_map = dict(zip(region_codes_cz, region_codes))
 
-    for row_idx, row in enumerate([mountain_codes[i:i+10] for i in range(0, len(mountain_codes), 10)]):
-        cols = st.columns(len(row))
-        for col_idx, (col, code) in enumerate(zip(cols, row)):
-            container_key = f"mountain_container_{code}_{row_idx}_{col_idx}"
-            with col:
-                with stylable_container(
-                    container_key,
-                    css_styles=f"""
-                    button {{
-                        background-color: #bbbbbb;
-                        color: black;
-                        height: 40px;
-                        width: 100%;
-                        min-width: 70px;
-                        font-size: 18px;
-                        font-weight: 600;
-                        border-radius: 12px;
-                        margin-bottom: 16px;
-                    }}
-                    """
-                ):
-                    if st.button(code, key=f"mountain_{code}"):
-                        selected_mountain = code
+        selected_region_label = st.segmented_control(
+            "Vyber kraj",
+            list(region_map.keys()),
+            key="region_sel"
+        )
 
-    # --- Forecast output ---
+        if selected_region_label:
+            active = ("region", region_map[selected_region_label])
+
+    # ---------------- MOUNTAINS ----------------
+    elif mode_choice == "Horské oblasti":
+
+        st.markdown("### Horské oblasti")
+
+        mountain_map = {code: code for code, _ in mountains}
+
+        selected_mountain = st.segmented_control(
+            "Vyber oblast",
+            list(mountain_map.keys()),
+            key="mountain_sel"
+        )
+
+        if selected_mountain:
+            active = ("mountain", selected_mountain)
+
+    # 👇 MOVE PLACEHOLDER HERE (IMPORTANT)
     forecast_placeholder = st.empty()
 
-    if selected_mountain:
-        with st.spinner("Načítám data..."):
-            forecast_html = fetch_mountain(selected_mountain)
-            forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
-    elif selected_region:
-        with st.spinner("Načítám data..."):
-            forecast_html = fetch_region(selected_region)
-            forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
+    # ---------------- OUTPUT ----------------
+    with st.spinner("Načítám data..."):
+
+        if active is None:
+            forecast_placeholder.markdown(
+                "<p style='color:#777;'>Vyber konkrétní oblast</p>",
+                unsafe_allow_html=True
+            )
+            st.stop()
+
+        kind, value = active
+
+        if kind == "mountain":
+            forecast_html = fetch_mountain(value)
+        else:
+            forecast_html = fetch_region(value)
+
+    forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
