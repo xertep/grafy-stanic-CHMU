@@ -1235,16 +1235,6 @@ elif mode == "Srážkové mapy":
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
         valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
 
-        html = f"""
-        <div style="margin-bottom:25px; text-align:left;">
-            <img src="{img_url}" 
-                 style="max-width:100%; height:auto; display:block;"
-                 onerror="this.parentElement.style.display='none'">
+        st.image(img_url, use_container_width=True)
 
-            <div style="font-size:14px; color:gray; margin-top:5px;">
-                +{step} h ({valid_time})
-            </div>
-        </div>
-        """
-
-        st.markdown(html, unsafe_allow_html=True)
+        st.caption(f"+{step} h ({valid_time})")
