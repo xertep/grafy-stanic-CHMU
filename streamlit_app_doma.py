@@ -1228,14 +1228,22 @@ elif mode == "Srážkové mapy":
     # --- Steps ---
     steps = [24,30,36,42,48,54,60,66,72]
 
-    st.markdown(f"### Run: {selected_run}")
+    run_dt = datetime.strptime(selected_run, "%Y%m%d%H")
 
-    # --- Show images ---
     for step in steps:
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
+        valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
 
-        st.image(
-            img_url,
-            caption=f"+{step} h",
-            use_container_width=True
+        st.markdown(
+            f"""
+            <div style="margin-bottom:25px;">
+                <img src="{img_url}" 
+                     style="width:auto; max-width:100%; height:auto; display:block; margin:auto;"
+                     onerror="this.parentElement.style.display='none'">
+                <div style="font-size:14px; color:gray; text-align:center;">
+                    +{step} h ({valid_time})
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
