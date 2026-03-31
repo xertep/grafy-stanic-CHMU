@@ -989,7 +989,7 @@ def fetch_mountain(mountain_code):
 st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
-mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi"])
+mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Srážkové mapy"])
 
 if "last_mode" not in st.session_state:
     st.session_state.last_mode = None
@@ -1193,3 +1193,49 @@ elif mode == "Textové předpovědi":
             forecast_html = fetch_region(value)
 
     forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
+
+# ---------------- PRECIP MODE ----------------
+elif mode == "Srážkové mapy":
+
+    st.subheader("24h srážky – model ČHMÚ")
+
+    BASE_URL_FLOODS = "https://opendata.chmi.cz/meteorology/floods/"
+
+    # --- Generate last 8 runs ---
+    def get_last_runs(n=8):
+        now = datetime.utcnow()
+
+        # round down to nearest 6h cycle
+        hour = (now.hour // 6) * 6
+        base = now.replace(hour=hour, minute=0, second=0, microsecond=0)
+
+        runs = []
+        for i in range(n):
+            run_time = base - timedelta(hours=6*i)
+            runs.append(run_time.strftime("%Y%m%d%H"))
+
+        return runs
+
+    runs = get_last_runs(8)
+
+    # --- Selector ---
+    selected_run = st.selectbox(
+        "Vyber běh modelu",
+        runs,
+        format_func=lambda x: f"{x[:8]} {x[8:]} UTC"
+    )
+
+    # --- Steps ---
+    steps = [24,30,36,42,48,54,60,66,72]
+
+    st.markdown(f"### Run: {selected_run}")
+
+    # --- Show images ---
+    for step in steps:
+        img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
+
+        st.image(
+            img_url,
+            caption=f"+{step} h",
+            use_container_width=True
+        )
