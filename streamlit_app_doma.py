@@ -1235,6 +1235,11 @@ elif mode == "Srážkové mapy 24h Aladin":
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
         valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
 
-        st.caption(f"24h suma srážek do {valid_time} ⬇️")
+        st.markdown(
+            f"<div style='color:black; font-weight:500; margin-bottom:2px;'>"
+            f"24h suma srážek do {valid_time} ↓</div>",
+            unsafe_allow_html=True
+        )
+
         st.image(img_url, use_container_width=False)
         st.write("")
