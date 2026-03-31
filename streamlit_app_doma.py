@@ -1022,28 +1022,30 @@ if mode == "Stanice":
     # --- Shortcut buttons ---
     col1, col2, col3 = st.columns([2, 1, 1])  # main button + 2 shortcuts
 
-    # Initialize session_state to store chosen station
-    if "chosen_station" not in st.session_state:
-        st.session_state.chosen_station = None
-
     with col1:
-        if st.button("Zobraz data"):
-            st.session_state.chosen_station = station_name
+        btn_main = st.button("Zobraz data")
 
     with col2:
-        if st.button("Dukovany"):
-            st.session_state.chosen_station = "Dukovany (B2DUKO01)"
+        btn_dukovany = st.button("Dukovany")
 
     with col3:
-        if st.button("Brno, Žabovřesky"):
-            st.session_state.chosen_station = "Brno, Žabovřesky (B2BZAB01)"
+        btn_brno = st.button("Brno, Žabovřesky")
+
+    # --- Decide which station to show ---
+    if btn_dukovany:
+        chosen_station = "Dukovany (B2DUKO01)"
+    elif btn_brno:
+        chosen_station = "Brno, Žabovřesky (B2BZAB01)"
+    elif btn_main:
+        chosen_station = station_name
+    else:
+        chosen_station = None
 
     # 👇 PLACEHOLDER HERE (after button!)
     station_placeholder = st.empty()
 
     # --- Plot section ---
-    if st.session_state.chosen_station:
-        chosen_station = st.session_state.chosen_station
+    if chosen_station:
         station_info = stations[chosen_station]
         wsi = station_info["wsi"]
         elevation = station_info["elevation"]
