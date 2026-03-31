@@ -1219,10 +1219,11 @@ elif mode == "Srážkové mapy":
     runs = get_last_runs(8)
 
     # --- Selector ---
-    selected_run = st.selectbox(
+    selected_run = st.segmented_control(
         "Vyber běh modelu",
         runs,
-        format_func=lambda x: f"{x[:8]} {x[8:]} UTC"
+        format_func=lambda x: f"{x[6:8]}.{x[4:6]} {x[8:]} UTC",
+        default=runs[0]
     )
 
     # --- Steps ---
@@ -1235,15 +1236,15 @@ elif mode == "Srážkové mapy":
         valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
 
         st.markdown(
-            f"""
-            <div style="margin-bottom:25px;">
-                <img src="{img_url}" 
-                     style="width:auto; max-width:100%; height:auto; display:block; margin:auto;"
-                     onerror="this.parentElement.style.display='none'">
-                <div style="font-size:14px; color:gray; text-align:center;">
-                    +{step} h ({valid_time})
-                </div>
+        f"""
+        <div style="margin-bottom:25px; text-align:center;">
+            <img src="{img_url}" 
+                 style="max-width:100%; height:auto;"
+                 onerror="this.parentElement.style.display='none'">
+            <div style="font-size:14px; color:gray;">
+                +{step} h ({valid_time})
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
