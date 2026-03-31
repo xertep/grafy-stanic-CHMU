@@ -1222,7 +1222,7 @@ elif mode == "Srážkové mapy":
     selected_run = st.segmented_control(
         "Vyber běh modelu",
         runs,
-        format_func=lambda x: f"{x[6:8]}.{x[4:6]} {x[8:]} UTC",
+        format_func=lambda x: f"{x[6:8]}.{x[4:6]}. {x[8:]} UTC",
         default=runs[0]
     )
 
@@ -1237,14 +1237,15 @@ elif mode == "Srážkové mapy":
 
         st.markdown(
         f"""
-        <div style="margin-bottom:25px; text-align:center;">
+        <div style="margin-bottom:25px; text-align:left;">
             <img src="{img_url}" 
-                 style="max-width:100%; height:auto;"
+                 style="max-width:100%; height:auto; display:block;"
                  onerror="this.parentElement.style.display='none'">
-            <div style="font-size:14px; color:gray;">
+
+            <div style="font-size:14px; color:gray; margin-top:5px;">
                 +{step} h ({valid_time})
             </div>
         </div>
         """,
         unsafe_allow_html=True
-    )
+        )
