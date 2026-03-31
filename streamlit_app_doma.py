@@ -1202,12 +1202,15 @@ elif mode == "Srážkové mapy 24h Aladin":
     BASE_URL_FLOODS = "https://opendata.chmi.cz/meteorology/floods/"
 
     # --- Generate last 8 runs ---
-    def get_last_runs(n=8):
+    def get_last_runs(n=8, availability_delay_hours=2.5):
         now = datetime.utcnow()
 
+        # apply delay (this is your key logic)
+        now_adjusted = now - timedelta(hours=availability_delay_hours)
+
         # round down to nearest 6h cycle
-        hour = (now.hour // 6) * 6
-        base = now.replace(hour=hour, minute=0, second=0, microsecond=0)
+        hour = (now_adjusted.hour // 6) * 6
+        base = now_adjusted.replace(hour=hour, minute=0, second=0, microsecond=0)
 
         runs = []
         for i in range(n):
@@ -1216,7 +1219,7 @@ elif mode == "Srážkové mapy 24h Aladin":
 
         return runs
 
-    runs = get_last_runs(8)
+    runs = get_last_runs(8, availability_delay_hours=2.5)
 
     # --- Selector ---
     selected_run = st.segmented_control(
@@ -1249,3 +1252,4 @@ elif mode == "Srážkové mapy 24h Aladin":
 
         st.image(img_url, use_container_width=False)
         st.write("")
+
