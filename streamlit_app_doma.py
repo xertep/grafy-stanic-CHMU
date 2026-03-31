@@ -1140,8 +1140,8 @@ elif mode == "Textové předpovědi":
 
         st.markdown("### Kraje a ČR")
 
-        region_codes = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","CR"]
-        region_codes_cz = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","ČR"]
+        region_codes = ["JM","VY","ZL","KV","PL","UL","SC","PH","CB","LB","HK","PU","OL","MS","CR"]
+        region_codes_cz = ["JM","VY","ZL","KV","PL","UL","SC","PH","CB","LB","HK","PU","OL","MS","ČR"]
 
         region_map = dict(zip(region_codes_cz, region_codes))
 
