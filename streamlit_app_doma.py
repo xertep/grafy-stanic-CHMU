@@ -1244,30 +1244,12 @@ elif mode == "Srážkové mapy 24h Aladin":
               .strftime("%d.%m. %H:%M")
         )
 
-        # --- Title ---
         st.markdown(
             f"<div style='font-weight:500; margin-bottom:2px;'>"
             f"24h suma srážek do {valid_time} hod ▼</div>",
             unsafe_allow_html=True
         )
 
-        # --- Image with fallback ---
-        st.markdown(f"""
-        <div style="margin-bottom:20px;">
-            <img src="{img_url}" 
-                 style="max-width:100%; height:auto; display:block;"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-
-            <div style="
-                display:none;
-                font-size:14px;
-                color:#555;
-                padding:8px;
-                background:#f5f5f5;
-                border-radius:6px;
-            ">
-                ⏳ Data nejsou zatím dostupná
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.image(img_url, use_container_width=False)
+        st.write("")
 
