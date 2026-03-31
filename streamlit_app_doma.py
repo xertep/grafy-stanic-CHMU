@@ -1236,8 +1236,8 @@ elif mode == "Srážkové mapy 24h Aladin":
         valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
 
         st.markdown(
-            f"<div style='color:black; font-weight:500; margin-bottom:2px;'>"
-            f"24h suma srážek do {valid_time} ↓</div>",
+            f"<div style='font-weight:500; margin-bottom:2px;'>"
+            f"24h suma srážek do {valid_time} UTC ↓</div>",
             unsafe_allow_html=True
         )
 
