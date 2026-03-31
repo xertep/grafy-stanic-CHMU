@@ -85,6 +85,207 @@ regions = {
             "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
             "Vlkoš", "Staré Hutě", "Hluk"
         ]
+    },
+    "KV": {
+        "full": [
+            "Dyleň", "Krásné Údolí", "Mariánské Lázně, vodárna",
+            "Aš", "Klínovec", "Karlovy Vary", "Karlovy Vary, Olšová Vrata",
+            "Nejdek", "Šindelová, Obora", "Sokolov"
+        ],
+        "precip_only": [
+            "Žlutice", "Abertamy", "Bečov nad Teplou",
+            "Kynžvart, Lazy", "Luby", "Stráž nad Ohří"
+        ]
+    },
+    "PL": {
+        "full": [
+            "Horská Kvilda", "Vlkonice", "Domažlice",
+            "Hojsova Stráž", "Klatovy", "Nepomuk",
+            "Plzeň, Bolevec", "Rokycany", "Špičák", "Staňkov",
+            "Konstantinovy Lázně", "Kralovice",
+            "Stříbro", "Tachov", "Zbiroh, Švabín"
+        ],
+        "precip_only": [
+            "Filipova Huť", "Chanovice", "Nalžovské Hory",
+            "Prášily", "Radošice", "Strašín", "Zámyšl",
+            "Borovno, Míšov", "Čachrov", "Česká Kubice",
+            "Horšovský Týn", "Chudenice", "Lovčice, Kvasetice",
+            "Nezvěstice", "Pivoň", "Stod", "Železná Ruda",
+            "Železná", "Bezvěrov", "Staré Sedlo, Darmyšl",
+            "Liblín", "Planá", "Strašice",
+            "Terešov", "Úlice"
+        ]
+    },
+    "UL": {
+        "full": [
+            "Měděnec", "Milešovka", "Nová Ves v Horách",
+            "Smolnice", "Sněžník", "Strojetice",
+            "Teplice", "Ústí nad Labem, Vaňov",
+            "Žatec", "Děčín", "Varnsdorf"
+        ],
+        "precip_only": [
+            "Dubí", "Hřivice", "Hrob, Křižanov", "Klíny",
+            "Libochovice, Poplze", "Mašťov",
+            "Měrunice, Žichov", "Milešov",
+            "Petrovice, Krásný Les", "Straškov-Vodochody",
+            "Tisá", "Velká Černoc",
+            "Děčín, Těchlovice", "Lobendava",
+            "Šluknov", "Verneřice"
+        ]
+    },
+    "SC": {
+        "full": [
+            "Rožmitál pod Třemšínem", "Čáslav, Nové město",
+            "Chotusice, letiště", "Poděbrady", "Radovesnice II.",
+            "Zbýšov, Dobrovítov", "Heřmanov", "Dobřichovice",
+            "Kralupy nad Vltavou", "Lány", "Neumětely",
+            "Příbram", "Brandýs nad Labem-St.B",
+            "Dolní Bousov", "Katusice", "Semčice", "Tuhaň",
+            "Nedrahovice, Rudolec", "Ondřejov", "Vavřinec, Žíšov"
+        ],
+        "precip_only": [
+            "Březnice", "Bahno", "Dymokury", "Konárovice",
+            "Kounov", "Karlova Ves", "Rakovník", "Hudlice",
+            "Hvozdec, Mrtník", "Kamýk nad Vltavou",
+            "Slaný", "Voznice", "Zlonice",
+            "Boseň, Mužský", "Kostomlaty nad Labem",
+            "Mšeno", "Káraný", "Benešov",
+            "Řendějov, Nový Samechov", "Svatý Jan",
+            "Horoměřice (Suchdol)", "Veleň, PČOV Miškovice"
+        ]
+    },
+    "PH": {
+        "full": [
+            "Praha, Kbely", "Praha, Klementinum",
+            "Praha, Ruzyně", "Praha, Vinohrady - Flora",
+            "Praha, Komořany"
+        ],
+        "precip_only": [
+            "Praha, Břevnov", "Praha, Běchovice",
+            "Praha, Břevnov (Vypich)", "Praha, Bubeneč (F0 ÚČOV)",
+            "Praha, Ďáblice (Ládví)", "Praha, Dubeč (PČOV Uhříněves)",
+            "Praha, Hlubočepy (Barrandov)",
+            "Praha, Horní Měcholupy (Kozinec)",
+            "Praha, Horní Počernice", "Praha, Chodov",
+            "Praha, Jinonice (Vidoule)", "Praha, Karlov",
+            "Praha, Kyje", "Praha, Libeň (Prosek)",
+            "Praha, Michle (Zelená Liška)",
+            "Praha, Modřany sever II", "Praha, Radotín",
+            "Praha, Řepy", "Praha, Stodůlky (Kopanina)",
+            "Praha, Střešovice (Bruska)",
+            "Praha, Vinohrady (Flora)",
+            "Praha, Žižkov (Hrdlořezy)"
+        ]
+    },
+    "CB": {
+        "full": [
+            "Borová Lada", "Černá v Pošumaví", "Husinec", "Ktiš, Tisovka",
+            "Kvilda", "Sedlice", "Strakonice, Nové Strakonice", "Temelín, MW332",
+            "Vimperk", "Volary", "Vráž", "Borkovice", "Byňov",
+            "Český Krumlov, Přísečná", "Hlasivo",
+            "Jindřichův Hradec, Děbolín", "Křemže, Mříč",
+            "Nadějkov, Větrov", "Tábor, Měšice", "Třeboň, Lužnice",
+            "Vyšší Brod", "Bučina, u Kvildy"
+        ],
+        "precip_only": [
+            "Český Rudolec", "Bernartice", "Hluboká nad Vltavou",
+            "Chelčice", "Jelení, Nová Pec", "Kestřany", "Krsice",
+            "Orlík nad Vltavou", "Paseky", "Strážný", "Vacov, Peckov",
+            "Volyně, Nihošovice", "Zbytiny", "Bechyně",
+            "Dolní Dvořiště", "Chlum u Třeboně", "Nová Bystřice",
+            "Netřebice", "Olší", "Pohorská Ves", "Staré Hutě",
+            "Strmilov", "Stráž nad Nežárkou", "Trhové Sviny",
+            "Mladá Vožice"
+        ]
+    },
+    "LB": {
+        "full": [
+            "Desná, Souš", "Harrachov", "Holenice", "Bedřichov",
+            "Česká Lípa", "Doksy", "Hejnice",
+            "Jablonné v Podještědí", "Stráž pod Ralskem"
+        ],
+        "precip_only": [
+            "Josefův Důl", "Lomnice nad Popelkou", "Roprachtice",
+            "Semily", "Studenec", "Vysoké nad Jizerou",
+            "Bedřichov, Hřebínek", "Bedřichov, Kristiánov",
+            "Bedřichov, U Podkovy", "Hejnice, Kasárenská",
+            "Kořenov, Jezdecká", "Kořenov, Jizerská cesta",
+            "Kořenov, Kůrovec", "Kořenov, Lasičí",
+            "Bedřichov, Černá hora", "Chotyně", "Chrastava",
+            "Jablonec nad Nisou", "Křižany", "Mařenice",
+            "Mimoň", "Nový Bor", "Nové Město pod Smrkem",
+            "Višňová", "Zahrádky", "Žandov, Horní Police",
+            "Bedřichov, Prameny Černé Nisy",
+            "Bílý Potok, Pavlova cesta", "Bílý Potok, Smědava",
+            "Bílý Potok, U Jeřábu", "Bedřichov, Tomšovka",
+            "Bedřichov, Uhlířská", "Hejnice, Knajpa",
+            "Hejnice, Smědavská hora"
+        ]
+    },
+    "HK": {
+        "full": [
+            "Česká Skalice, Rozkoš", "Labská bouda", "Luční bouda",
+            "Teplice nad Metují Zdoňov", "Trutnov", "Úpice",
+            "Velichovky", "Vrchlabí", "Žacléř", "Borohrádek",
+            "Deštné v Orlic. horách", "Orlické Záhoří - Vodárna",
+            "Polom, Sedloňov", "Rokytnice v Orlic.horách",
+            "Rychnov nad Kněžnou", "Broumov", "Holovousy",
+            "Hradec Králové, Nový Hradec Králové", "Jičín",
+            "Lázně Bělohrad", "Nový Bydžov",
+            "Hradec Králové, Svobodné Dvory",
+            "Adršpach, Horní Adršpach"
+        ],
+        "precip_only": [
+            "Černý Důl", "Dolní Dvůr, Rudolfov", "Horní Maršov",
+            "Hostinné", "Police nad Metují",
+            "Pomezní boudy, Horní Malá Úpa", "Strážné",
+            "Bílý Újezd, Hroška", "České Meziříčí",
+            "Luisino údolí, Deštné v Orlických horách",
+            "Olešnice, Čihálka", "Olešnice, Vodárna",
+            "Slatina nad Zdobnicí", "Zdobnice", "Božanov",
+            "Libáň", "Slatiny, Milíčeves"
+        ]
+    },
+    "PU": {
+        "full": [
+            "Nedvězí", "Králíky", "Žamberk", "Gajer, Janov",
+            "Hrušová", "Mokošín", "Pardubice, letiště",
+            "Seč", "Skuteč", "Jevíčko", "Třebařov"
+        ],
+        "precip_only": [
+            "Hradec nad Svitavou", "Polička", "Choceň",
+            "Orličky", "Heřmanův Městec",
+            "Hrochův Týnec", "Lubná", "Nové Hrady",
+            "Červená Voda"
+        ]
+    },
+    "OL": {
+        "full": [
+            "Prostějov", "Protivanov", "Bělotín", "Javorník",
+            "Jeseník", "Dubicko", "Hanušovice",
+            "Olomouc, Holice",
+            "Staré Město pod Sněžníkem, Paprsek",
+            "Šternberk", "Šumperk", "Přerov"
+        ],
+        "precip_only": [
+            "Dřevohostice", "Kojetín",
+            "Bělá pod Pradědem, Červenohorské sedlo",
+            "Branná, Františkov",
+            "Dlouhé Stráně, Kouty nad Desnou",
+            "Hoštejn", "Velké Losiny", "Oskava"
+        ]
+    },
+    "MS": {
+        "full": [
+            "Bílá, Konečná", "Bohumín, Záblatí",
+            "Frýdek-Místek, Místek", "Frenštát pod Radhoštěm",
+            "Slezská Harta", "Horní Lomná", "Jablunkov, Návsí",
+            "Karviná", "Karlova Studánka", "Krnov",
+            "Lučina", "Mořkov", "Mošnov",
+            "Opava, Otice", "Ostrava, Poruba",
+            "Ropice", "Světlá Hora", "Vítkov"
+        ],
+        "precip_only": ["Karlovice", "Lichnov", "Lomnice"]
     }
 }
 
@@ -782,10 +983,24 @@ def fetch_mountain(mountain_code):
 st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
-mode = st.radio("Režim", ["Stanice", "Region", "Textové předpovědi"])
+mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Srážkové mapy 24h Aladin"])
+
+if "last_mode" not in st.session_state:
+    st.session_state.last_mode = None
+
+if st.session_state.last_mode != mode:
+
+    # leaving Region → always reset region state
+    if st.session_state.last_mode == "Region":
+        st.session_state.selected_element = None
+        st.session_state.region_run = False
+
+    st.session_state.last_mode = mode
 
 # ---------------- STATION MODE ----------------
 if mode == "Stanice":
+
+    st.subheader("Graf vybrané stanice")
 
     station_list = list(stations.keys())
 
@@ -798,14 +1013,27 @@ if mode == "Stanice":
         index=default_index
     )
 
-    if st.button("Zobraz data"):
+    show_data = st.button("Zobraz data")
+
+    # 👇 PLACEHOLDER HERE (after button!)
+    station_placeholder = st.empty()
+
+    if show_data:
         station_info = stations[station_name]
         wsi = station_info["wsi"]
         elevation = station_info["elevation"]
 
         with st.spinner("Načítám data..."):
             df = fetch_station_data(wsi)
-        plot_station(df, station_name, elevation)
+
+        with station_placeholder.container():
+            plot_station(df, station_name, elevation)
+
+    else:
+        station_placeholder.markdown(
+            "<p style='color:#777;'>Zobrazí graf vybrané stanice</p>",
+            unsafe_allow_html=True
+        )
 
 # ---------------- REGION MODE ----------------
 elif mode == "Region":
@@ -818,8 +1046,6 @@ elif mode == "Region":
         default=list(regions.keys())[0]
     )
 
-    st.subheader("Prvek")
-
     elements_buttons = {
         "Teplota": "T",
         "T přízemní": "TPM",
@@ -829,107 +1055,165 @@ elif mode == "Region":
         "Vlhkost": "H"
     }
 
-    if "selected_element" not in st.session_state:
-        st.session_state.selected_element = None
+    selected_element_label = st.segmented_control(
+        "Prvek",
+        list(elements_buttons.keys()),
+        key="region_element_selector"
+    )
 
-    cols = st.columns(len(elements_buttons))
+    selected_element = elements_buttons.get(selected_element_label)
 
-    for i, (label, elem) in enumerate(elements_buttons.items()):
-        if cols[i].button(label):
-            st.session_state.selected_element = elem
+    # 👇 INIT
+    if "region_run" not in st.session_state:
+        st.session_state.region_run = False
 
-    if st.session_state.selected_element:
+    if "last_selected_element" not in st.session_state:
+        st.session_state.last_selected_element = None
+
+    # 👇 Detect CHANGE (this is the key)
+    if selected_element != st.session_state.last_selected_element:
+        st.session_state.region_run = True
+        st.session_state.last_selected_element = selected_element
+
+    region_placeholder = st.empty()
+
+    # ---------------- OUTPUT ----------------
+    if st.session_state.region_run and selected_element:
+
         with st.spinner("Načítám data..."):
             plot_region_element(
                 selected_region,
-                st.session_state.selected_element,
+                selected_element,
                 regions,
                 stations
             )
+
+        st.session_state.region_run = False
+
+    else:
+        region_placeholder.markdown(
+            "<p style='color:#777;'>Zobrazí vybraný prvek pro všechny dostupné stanice v kraji do jednoho grafu</p>",
+            unsafe_allow_html=True
+        )
 
 # ---------------- FORECAST MODE ----------------
 elif mode == "Textové předpovědi":
 
     st.subheader("Předpovědi počasí ČHMÚ")
 
-    # --- Colors ---
-    main_region_colors = {"JM": "#ffc0cb", "ZL": "#98fb98", "VY": "#87ceeb", "CR": "#ffd700"}
-    other_region_colors = {
-        "CB":"#eeeeee", "HK":"#eeeeee", "KV":"#eeeeee", "LB":"#eeeeee",
-        "MS":"#eeeeee", "OL":"#eeeeee", "PH":"#eeeeee", "PL":"#eeeeee",
-        "PU":"#eeeeee", "SC":"#eeeeee", "UL":"#eeeeee"
-    }
+    # ---------------- STEP 1 ----------------
+    mode_choice = st.segmented_control(
+        "Co chceš zobrazit?",
+        ["Kraje a ČR", "Horské oblasti"],
+        key="forecast_type"
+    )
 
-    # --- Regions (Kraje) ---
-    st.markdown("### Kraje")
-    region_codes = ["JM","ZL","VY","CR","CB","HK","KV","LB","MS","OL","PH","PL","PU","SC","UL"]
-    region_codes_cz = ["JM","ZL","VY","ČR","CB","HK","KV","LB","MS","OL","PH","PL","PU","SC","UL"]
-    selected_region = None
+    active = None
 
-    for row_idx, row in enumerate([list(zip(region_codes, region_codes_cz))[i:i+15] for i in range(0, len(region_codes), 15)]):
-        cols = st.columns(len(row))
-        for col_idx, (col, (code, label)) in enumerate(zip(cols, row)):
-            color = main_region_colors.get(code, other_region_colors.get(code, "#eeeeee"))
+    # ---------------- REGIONS ----------------
+    if mode_choice == "Kraje a ČR":
 
-            container_key = f"region_container_{code}_{row_idx}_{col_idx}"
+        st.markdown("### Kraje a ČR")
 
-            with col:
-                with stylable_container(
-                    container_key,
-                    css_styles=f"""
-                    button {{
-                        background-color: {color};
-                        color: black;
-                        height: 40px;
-                        width: 100%;
-                        min-width: 85px;
-                        font-size: 18px;
-                        font-weight: 600;
-                        border-radius: 12px;
-                        margin-bottom: 8px;
-                    }}
-                    """
-                ):
-                    if st.button(label, key=f"region_{code}"):  # 👈 HERE
-                        selected_region = code  # 👈 still uses original code
+        region_codes = ["JM","VY","ZL","KV","PL","UL","SC","PH","CB","LB","HK","PU","OL","MS","CR"]
+        region_codes_cz = ["JM","VY","ZL","KV","PL","UL","SC","PH","CB","LB","HK","PU","OL","MS","ČR"]
 
-    # --- Mountains (Horské oblasti) ---
-    st.markdown("### Horské oblasti")
-    selected_mountain = None
-    mountain_codes = [code for code, _ in mountains]
+        region_map = dict(zip(region_codes_cz, region_codes))
 
-    for row_idx, row in enumerate([mountain_codes[i:i+10] for i in range(0, len(mountain_codes), 10)]):
-        cols = st.columns(len(row))
-        for col_idx, (col, code) in enumerate(zip(cols, row)):
-            container_key = f"mountain_container_{code}_{row_idx}_{col_idx}"
-            with col:
-                with stylable_container(
-                    container_key,
-                    css_styles=f"""
-                    button {{
-                        background-color: #bbbbbb;
-                        color: black;
-                        height: 40px;
-                        width: 100%;
-                        min-width: 70px;
-                        font-size: 18px;
-                        font-weight: 600;
-                        border-radius: 12px;
-                        margin-bottom: 16px;
-                    }}
-                    """
-                ):
-                    if st.button(code, key=f"mountain_{code}"):
-                        selected_mountain = code
+        selected_region_label = st.segmented_control(
+            "Vyber kraj",
+            list(region_map.keys()),
+            key="region_sel"
+        )
 
-    # --- Forecast output ---
+        if selected_region_label:
+            active = ("region", region_map[selected_region_label])
+
+    # ---------------- MOUNTAINS ----------------
+    elif mode_choice == "Horské oblasti":
+
+        st.markdown("### Horské oblasti")
+
+        mountain_map = {code: code for code, _ in mountains}
+
+        selected_mountain = st.segmented_control(
+            "Vyber oblast",
+            list(mountain_map.keys()),
+            key="mountain_sel"
+        )
+
+        if selected_mountain:
+            active = ("mountain", selected_mountain)
+
+    # 👇 MOVE PLACEHOLDER HERE (IMPORTANT)
     forecast_placeholder = st.empty()
 
-    if selected_mountain:
-        with st.spinner("Načítám data..."):
-            forecast_html = fetch_mountain(selected_mountain)
-            forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
-    elif selected_region:
-        with st.spinner("Načítám data..."):
-            forecast_html = fetch_region(selected_region)
-            forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
+    # ---------------- OUTPUT ----------------
+    with st.spinner("Načítám data..."):
+
+        if active is None:
+            forecast_placeholder.markdown(
+                "<p style='color:#777;'>Vyber konkrétní oblast</p>",
+                unsafe_allow_html=True
+            )
+            st.stop()
+
+        kind, value = active
+
+        if kind == "mountain":
+            forecast_html = fetch_mountain(value)
+        else:
+            forecast_html = fetch_region(value)
+
+    forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
+
+# ---------------- PRECIP MODE ----------------
+elif mode == "Srážkové mapy 24h Aladin":
+
+    st.subheader("24h srážky – Aladin")
+
+    BASE_URL_FLOODS = "https://opendata.chmi.cz/meteorology/floods/"
+
+    # --- Generate last 8 runs ---
+    def get_last_runs(n=8):
+        now = datetime.utcnow()
+
+        # round down to nearest 6h cycle
+        hour = (now.hour // 6) * 6
+        base = now.replace(hour=hour, minute=0, second=0, microsecond=0)
+
+        runs = []
+        for i in range(n):
+            run_time = base - timedelta(hours=6*i)
+            runs.append(run_time.strftime("%Y%m%d%H"))
+
+        return runs
+
+    runs = get_last_runs(8)
+
+    # --- Selector ---
+    selected_run = st.segmented_control(
+        "Vyber běh modelu",
+        runs,
+        format_func=lambda x: f"{x[6:8]}.{x[4:6]}. {x[8:]} UTC",
+        default=runs[0]
+    )
+
+    # --- Steps ---
+    steps = [24,30,36,42,48,54,60,66,72]
+
+    run_dt = datetime.strptime(selected_run, "%Y%m%d%H")
+
+    for step in steps:
+        img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
+        valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
+
+        st.markdown(
+            f"<div style='font-weight:500; margin-bottom:2px;'>"
+            f"24h suma srážek do {valid_time} UTC ▼</div>",
+            unsafe_allow_html=True
+        )
+
+        st.image(img_url, use_container_width=False)
+        st.write("")
+
