@@ -1234,6 +1234,11 @@ elif mode == "Srážkové mapy 24h Aladin":
 
     run_dt = datetime.strptime(selected_run, "%Y%m%d%H")
 
+    czech_days = [
+        "pondělí", "úterý", "středy", "čtvrtka",
+        "pátku", "soboty", "neděle"
+    ]
+
     for step in steps:
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
         forecast_time = run_dt + timedelta(hours=step)
@@ -1244,9 +1249,13 @@ elif mode == "Srážkové mapy 24h Aladin":
               .strftime("%d.%m. %H:%M")
         )
 
+        forecast_dt = pd.Timestamp(forecast_time, tz="UTC").tz_convert("Europe/Prague")
+
+        day_name = czech_days[forecast_dt.weekday()]
+
         st.markdown(
             f"<div style='font-weight:500; margin-bottom:2px;'>"
-            f"24h suma srážek do {valid_time} hod ▼</div>",
+            f"24h suma srážek do {day_name} {valid_time} hod ▼</div>",
             unsafe_allow_html=True
         )
 
