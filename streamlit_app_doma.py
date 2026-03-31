@@ -1235,6 +1235,6 @@ elif mode == "Srážkové mapy":
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
         valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
 
-        st.image(img_url, use_container_width=True)
+        st.image(img_url, use_container_width=False)
 
         st.caption(f"+{step} h ({valid_time})")
