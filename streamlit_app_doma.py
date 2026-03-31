@@ -989,7 +989,7 @@ def fetch_mountain(mountain_code):
 st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
-mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Srážkové mapy"])
+mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Srážkové mapy 24h Aladin"])
 
 if "last_mode" not in st.session_state:
     st.session_state.last_mode = None
@@ -1195,9 +1195,9 @@ elif mode == "Textové předpovědi":
     forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
 
 # ---------------- PRECIP MODE ----------------
-elif mode == "Srážkové mapy":
+elif mode == "Srážkové mapy 24h Aladin":
 
-    st.subheader("24h srážky – model ČHMÚ")
+    st.subheader("24h srážky – Aladin")
 
     BASE_URL_FLOODS = "https://opendata.chmi.cz/meteorology/floods/"
 
