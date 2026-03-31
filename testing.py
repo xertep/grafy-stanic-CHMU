@@ -983,7 +983,7 @@ def fetch_mountain(mountain_code):
 st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
-mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi"])
+mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Srážkové mapy 24h Aladin"])
 
 if "last_mode" not in st.session_state:
     st.session_state.last_mode = None
@@ -1166,3 +1166,54 @@ elif mode == "Textové předpovědi":
             forecast_html = fetch_region(value)
 
     forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
+
+# ---------------- PRECIP MODE ----------------
+elif mode == "Srážkové mapy 24h Aladin":
+
+    st.subheader("24h srážky – Aladin")
+
+    BASE_URL_FLOODS = "https://opendata.chmi.cz/meteorology/floods/"
+
+    # --- Generate last 8 runs ---
+    def get_last_runs(n=8):
+        now = datetime.utcnow()
+
+        # round down to nearest 6h cycle
+        hour = (now.hour // 6) * 6
+        base = now.replace(hour=hour, minute=0, second=0, microsecond=0)
+
+        runs = []
+        for i in range(n):
+            run_time = base - timedelta(hours=6*i)
+            runs.append(run_time.strftime("%Y%m%d%H"))
+
+        return runs
+
+    runs = get_last_runs(8)
+
+    # --- Selector ---
+    selected_run = st.segmented_control(
+        "Vyber běh modelu",
+        runs,
+        format_func=lambda x: f"{x[6:8]}.{x[4:6]}. {x[8:]} UTC",
+        default=runs[0]
+    )
+
+    # --- Steps ---
+    steps = [24,30,36,42,48,54,60,66,72]
+
+    run_dt = datetime.strptime(selected_run, "%Y%m%d%H")
+
+    for step in steps:
+        img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
+        valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
+
+        st.markdown(
+            f"<div style='font-weight:500; margin-bottom:2px;'>"
+            f"24h suma srážek do {valid_time} UTC ▼</div>",
+            unsafe_allow_html=True
+        )
+
+        st.image(img_url, use_container_width=False)
+        st.write("")
+
