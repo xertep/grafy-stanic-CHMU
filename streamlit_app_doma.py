@@ -1237,7 +1237,7 @@ elif mode == "Srážkové mapy 24h Aladin":
 
         st.markdown(
             f"<div style='font-weight:500; margin-bottom:2px;'>"
-            f"24h suma srážek do {valid_time} UTC ↓</div>",
+            f"24h suma srážek do {valid_time} UTC ▼</div>",
             unsafe_allow_html=True
         )
 
