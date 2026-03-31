@@ -11,6 +11,13 @@ from streamlit_extras.stylable_container import stylable_container
 import re
 
 
+# ---------------- STATE INIT (TOP OF APP) ----------------
+if "selected_element" not in st.session_state:
+    st.session_state.selected_element = None
+
+if "region_run" not in st.session_state:
+    st.session_state.region_run = False
+
 
 # Change browser tab title and favicon
 st.set_page_config(
@@ -43,49 +50,6 @@ BASE_URL = "https://opendata.chmi.cz/meteorology/climate/now/data/"
 
 # --- REGIONS ---
 regions = {
-    "JM": {
-        "full": [
-            "Tišnov, Hájek", "Protivanov", "Ivanovice na Hané", "Brno, Žabovřesky",
-            "Troubsko", "Brno, Tuřany", "Nemochovice", "Ždánice", "Pohořelice",
-            "Kobylí", "Kuchařovice", "Brod nad Dyjí", "Strážnice", "Dyjákovice",
-            "Lednice"
-        ],
-        "precip_only": [
-            "Olešnice", "Obora", "Podivice", "Bukovinka",
-            "Džbánice", "Střelice", "Šatov"
-        ]
-    },
-    "VY": {
-        "full": [
-            "Svratouch", "Nedvězí", "Havlíčkův Brod", "Libice nad Doubravou",
-            "Přibyslav, Hřiště", "Bystřice nad Pernštejnem", "Herálec", "Vatín",
-            "Košetice", "Nový Rychnov", "Hubenov", "Jihlava, Hruškové Dvory",
-            "Velké Meziříčí", "Černovice", "Počátky", "Sedlec", "Dukovany",
-            "Moravské Budějovice"
-        ],
-        "precip_only": [
-            "Habry", "Krucemburk", "Kadov", "Žďár nad Sázavou",
-            "Nové Město na Moravě", "Humpolec", "Štoky", "Radostín",
-            "Pacov", "Vysoké Studnice", "Kamenice nad Lipou, Vodná", "Třešť",
-            "Brtnice", "Nová Ves", "Jemnice", "Náměšť nad Oslavou"
-        ]
-    },
-    "ZL": {
-        "full": [
-            "Rožnov pod Radhoštěm", "Valašské Meziříčí", "Horní Bečva",
-            "Velké Karlovice", "Bystřice pod Hostýnem", "Kateřinice, Ojičná",
-            "Vsetín", "Hošťálková, Maruška", "Hošťálková", "Holešov",
-            "Kroměříž", "Valašská Senice", "Zlín", "Vizovice",
-            "Luhačovice, Kladná-Žilín", "Bojkovice", "Štítná nad Vláří",
-            "Staré Město", "Strání", "Žítková", "Kašava, pod Rablinů",
-            "Držková", "Nový Hrozenkov, Kohútka", "Velké Karlovice, Benešky",
-            "Horní Bečva, Kudlačena"
-        ],
-        "precip_only": [
-            "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
-            "Vlkoš", "Staré Hutě", "Hluk"
-        ]
-    },
     "KV": {
         "full": [
             "Dyleň", "Krásné Údolí", "Mariánské Lázně, vodárna",
@@ -259,6 +223,21 @@ regions = {
             "Červená Voda"
         ]
     },
+    "VY": {
+        "full": [
+            "Svratouch", "Nedvězí", "Havlíčkův Brod", "Libice nad Doubravou",
+            "Přibyslav, Hřiště", "Bystřice nad Pernštejnem", "Herálec", "Vatín",
+            "Košetice", "Nový Rychnov", "Hubenov", "Jihlava, Hruškové Dvory",
+            "Velké Meziříčí", "Černovice", "Počátky", "Sedlec", "Dukovany",
+            "Moravské Budějovice"
+        ],
+        "precip_only": [
+            "Habry", "Krucemburk", "Kadov", "Žďár nad Sázavou",
+            "Nové Město na Moravě", "Humpolec", "Štoky", "Radostín",
+            "Pacov", "Vysoké Studnice", "Kamenice nad Lipou, Vodná", "Třešť",
+            "Brtnice", "Nová Ves", "Jemnice", "Náměšť nad Oslavou"
+        ]
+    },
     "OL": {
         "full": [
             "Prostějov", "Protivanov", "Bělotín", "Javorník",
@@ -275,6 +254,18 @@ regions = {
             "Hoštejn", "Velké Losiny", "Oskava"
         ]
     },
+    "JM": {
+        "full": [
+            "Tišnov, Hájek", "Protivanov", "Ivanovice na Hané", "Brno, Žabovřesky",
+            "Troubsko", "Brno, Tuřany", "Nemochovice", "Ždánice", "Pohořelice",
+            "Kobylí", "Kuchařovice", "Brod nad Dyjí", "Strážnice", "Dyjákovice",
+            "Lednice"
+        ],
+        "precip_only": [
+            "Olešnice", "Obora", "Podivice", "Bukovinka",
+            "Džbánice", "Střelice", "Šatov"
+        ]
+    },
     "MS": {
         "full": [
             "Bílá, Konečná", "Bohumín, Záblatí",
@@ -286,6 +277,22 @@ regions = {
             "Ropice", "Světlá Hora", "Vítkov"
         ],
         "precip_only": ["Karlovice", "Lichnov", "Lomnice"]
+    },
+    "ZL": {
+        "full": [
+            "Rožnov pod Radhoštěm", "Valašské Meziříčí", "Horní Bečva",
+            "Velké Karlovice", "Bystřice pod Hostýnem", "Kateřinice, Ojičná",
+            "Vsetín", "Hošťálková, Maruška", "Hošťálková", "Holešov",
+            "Kroměříž", "Valašská Senice", "Zlín", "Vizovice",
+            "Luhačovice, Kladná-Žilín", "Bojkovice", "Štítná nad Vláří",
+            "Staré Město", "Strání", "Žítková", "Kašava, pod Rablinů",
+            "Držková", "Nový Hrozenkov, Kohútka", "Velké Karlovice, Benešky",
+            "Horní Bečva, Kudlačena"
+        ],
+        "precip_only": [
+            "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
+            "Vlkoš", "Staré Hutě", "Hluk"
+        ]
     }
 }
 
@@ -766,16 +773,16 @@ MOUNTAIN_FORECAST_TYPES = [
 ]
 
 mountains = [
-    ("VY", "Žďárské vrchy"),
-    ("ZL", "Javorníky a Bílé Karpaty"),
+    ("PL", "Český a Slavkovský les"),
+    ("UL", "Krušné hory"),
+    ("LB", "Jizerské hory"),
     ("CB", "Šumava a Novohradské hory"),
     ("HK", "Krkonoše"),
-    ("LB", "Jizerské hory"),
-    ("MT", "Beskydy"),
-    ("OL", "Jeseníky a Králický Sněžník"),
-    ("PL", "Český a Slavkovský les"),
     ("PU", "Orlické hory"),
-    ("UL", "Krušné hory"),
+    ("VY", "Žďárské vrchy"),
+    ("ZL", "Javorníky a Bílé Karpaty"),
+    ("OL", "Jeseníky a Králický Sněžník"),
+    ("MT", "Beskydy"),
 ]
 
 # Example region colors
@@ -979,6 +986,7 @@ def fetch_mountain(mountain_code):
     return "".join(output_lines)
 
 
+
 # ---------------- UI ----------------
 st.title("ČHMÚ meteostanice a předpovědi počasí")
 
@@ -1115,8 +1123,8 @@ elif mode == "Textové předpovědi":
 
         st.markdown("### Kraje a ČR")
 
-        region_codes = ["JM","VY","ZL","KV","PL","UL","SC","PH","CB","LB","HK","PU","OL","MS","CR"]
-        region_codes_cz = ["JM","VY","ZL","KV","PL","UL","SC","PH","CB","LB","HK","PU","OL","MS","ČR"]
+        region_codes = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","CR"]
+        region_codes_cz = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","ČR"]
 
         region_map = dict(zip(region_codes_cz, region_codes))
 
@@ -1167,6 +1175,7 @@ elif mode == "Textové předpovědi":
 
     forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
 
+
 # ---------------- PRECIP MODE ----------------
 elif mode == "Srážkové mapy 24h Aladin":
 
@@ -1206,11 +1215,17 @@ elif mode == "Srážkové mapy 24h Aladin":
 
     for step in steps:
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
-        valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
+        forecast_time = run_dt + timedelta(hours=step)
+
+        valid_time = (
+            pd.Timestamp(forecast_time, tz="UTC")
+              .tz_convert("Europe/Prague")
+              .strftime("%d.%m. %H:%M")
+        )
 
         st.markdown(
             f"<div style='font-weight:500; margin-bottom:2px;'>"
-            f"24h suma srážek do {valid_time} UTC ▼</div>",
+            f"24h suma srážek do {valid_time} hod ▼</div>",
             unsafe_allow_html=True
         )
 
