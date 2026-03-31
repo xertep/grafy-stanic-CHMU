@@ -1038,13 +1038,13 @@ if mode == "Stanice":
         if st.button("Brno, Žabovřesky"):
             st.session_state.chosen_station = "Brno, Žabovřesky (B2BZAB01)"
 
-    show_data = st.button("Zobraz data") or st.button("Dukovany") or st.button("Brno, Žabovřesky") 
-
     # 👇 PLACEHOLDER HERE (after button!)
     station_placeholder = st.empty()
 
-    if show_data:
-        station_info = stations[station_name]
+    # --- Plot section ---
+    if st.session_state.chosen_station:
+        chosen_station = st.session_state.chosen_station
+        station_info = stations[chosen_station]
         wsi = station_info["wsi"]
         elevation = station_info["elevation"]
 
@@ -1052,7 +1052,7 @@ if mode == "Stanice":
             df = fetch_station_data(wsi)
 
         with station_placeholder.container():
-            plot_station(df, station_name, elevation)
+            plot_station(df, chosen_station, elevation)
 
     else:
         station_placeholder.markdown(
