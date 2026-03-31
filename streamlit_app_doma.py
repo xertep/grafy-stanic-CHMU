@@ -1038,6 +1038,8 @@ if mode == "Stanice":
         if st.button("Brno, Žabovřesky"):
             st.session_state.chosen_station = "Brno, Žabovřesky (B2BZAB01)"
 
+    show_data = st.button("Zobraz data") or st.button("Dukovany") or st.button("Brno, Žabovřesky") 
+
     # 👇 PLACEHOLDER HERE (after button!)
     station_placeholder = st.empty()
 
