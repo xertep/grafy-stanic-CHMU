@@ -43,6 +43,49 @@ BASE_URL = "https://opendata.chmi.cz/meteorology/climate/now/data/"
 
 # --- REGIONS ---
 regions = {
+    "JM": {
+        "full": [
+            "Tišnov, Hájek", "Protivanov", "Ivanovice na Hané", "Brno, Žabovřesky",
+            "Troubsko", "Brno, Tuřany", "Nemochovice", "Ždánice", "Pohořelice",
+            "Kobylí", "Kuchařovice", "Brod nad Dyjí", "Strážnice", "Dyjákovice",
+            "Lednice"
+        ],
+        "precip_only": [
+            "Olešnice", "Obora", "Podivice", "Bukovinka",
+            "Džbánice", "Střelice", "Šatov"
+        ]
+    },
+    "VY": {
+        "full": [
+            "Svratouch", "Nedvězí", "Havlíčkův Brod", "Libice nad Doubravou",
+            "Přibyslav, Hřiště", "Bystřice nad Pernštejnem", "Herálec", "Vatín",
+            "Košetice", "Nový Rychnov", "Hubenov", "Jihlava, Hruškové Dvory",
+            "Velké Meziříčí", "Černovice", "Počátky", "Sedlec", "Dukovany",
+            "Moravské Budějovice"
+        ],
+        "precip_only": [
+            "Habry", "Krucemburk", "Kadov", "Žďár nad Sázavou",
+            "Nové Město na Moravě", "Humpolec", "Štoky", "Radostín",
+            "Pacov", "Vysoké Studnice", "Kamenice nad Lipou, Vodná", "Třešť",
+            "Brtnice", "Nová Ves", "Jemnice", "Náměšť nad Oslavou"
+        ]
+    },
+    "ZL": {
+        "full": [
+            "Rožnov pod Radhoštěm", "Valašské Meziříčí", "Horní Bečva",
+            "Velké Karlovice", "Bystřice pod Hostýnem", "Kateřinice, Ojičná",
+            "Vsetín", "Hošťálková, Maruška", "Hošťálková", "Holešov",
+            "Kroměříž", "Valašská Senice", "Zlín", "Vizovice",
+            "Luhačovice, Kladná-Žilín", "Bojkovice", "Štítná nad Vláří",
+            "Staré Město", "Strání", "Žítková", "Kašava, pod Rablinů",
+            "Držková", "Nový Hrozenkov, Kohútka", "Velké Karlovice, Benešky",
+            "Horní Bečva, Kudlačena"
+        ],
+        "precip_only": [
+            "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
+            "Vlkoš", "Staré Hutě", "Hluk"
+        ]
+    },
     "KV": {
         "full": [
             "Dyleň", "Krásné Údolí", "Mariánské Lázně, vodárna",
@@ -216,21 +259,6 @@ regions = {
             "Červená Voda"
         ]
     },
-    "VY": {
-        "full": [
-            "Svratouch", "Nedvězí", "Havlíčkův Brod", "Libice nad Doubravou",
-            "Přibyslav, Hřiště", "Bystřice nad Pernštejnem", "Herálec", "Vatín",
-            "Košetice", "Nový Rychnov", "Hubenov", "Jihlava, Hruškové Dvory",
-            "Velké Meziříčí", "Černovice", "Počátky", "Sedlec", "Dukovany",
-            "Moravské Budějovice"
-        ],
-        "precip_only": [
-            "Habry", "Krucemburk", "Kadov", "Žďár nad Sázavou",
-            "Nové Město na Moravě", "Humpolec", "Štoky", "Radostín",
-            "Pacov", "Vysoké Studnice", "Kamenice nad Lipou, Vodná", "Třešť",
-            "Brtnice", "Nová Ves", "Jemnice", "Náměšť nad Oslavou"
-        ]
-    },
     "OL": {
         "full": [
             "Prostějov", "Protivanov", "Bělotín", "Javorník",
@@ -247,18 +275,6 @@ regions = {
             "Hoštejn", "Velké Losiny", "Oskava"
         ]
     },
-    "JM": {
-        "full": [
-            "Tišnov, Hájek", "Protivanov", "Ivanovice na Hané", "Brno, Žabovřesky",
-            "Troubsko", "Brno, Tuřany", "Nemochovice", "Ždánice", "Pohořelice",
-            "Kobylí", "Kuchařovice", "Brod nad Dyjí", "Strážnice", "Dyjákovice",
-            "Lednice"
-        ],
-        "precip_only": [
-            "Olešnice", "Obora", "Podivice", "Bukovinka",
-            "Džbánice", "Střelice", "Šatov"
-        ]
-    },
     "MS": {
         "full": [
             "Bílá, Konečná", "Bohumín, Záblatí",
@@ -270,22 +286,6 @@ regions = {
             "Ropice", "Světlá Hora", "Vítkov"
         ],
         "precip_only": ["Karlovice", "Lichnov", "Lomnice"]
-    },
-    "ZL": {
-        "full": [
-            "Rožnov pod Radhoštěm", "Valašské Meziříčí", "Horní Bečva",
-            "Velké Karlovice", "Bystřice pod Hostýnem", "Kateřinice, Ojičná",
-            "Vsetín", "Hošťálková, Maruška", "Hošťálková", "Holešov",
-            "Kroměříž", "Valašská Senice", "Zlín", "Vizovice",
-            "Luhačovice, Kladná-Žilín", "Bojkovice", "Štítná nad Vláří",
-            "Staré Město", "Strání", "Žítková", "Kašava, pod Rablinů",
-            "Držková", "Nový Hrozenkov, Kohútka", "Velké Karlovice, Benešky",
-            "Horní Bečva, Kudlačena"
-        ],
-        "precip_only": [
-            "Valašská Bystřice", "Huslenky, Kychová", "Horní Lhota",
-            "Vlkoš", "Staré Hutě", "Hluk"
-        ]
     }
 }
 
@@ -766,16 +766,16 @@ MOUNTAIN_FORECAST_TYPES = [
 ]
 
 mountains = [
-    ("PL", "Český a Slavkovský les"),
-    ("UL", "Krušné hory"),
-    ("LB", "Jizerské hory"),
-    ("CB", "Šumava a Novohradské hory"),
-    ("HK", "Krkonoše"),
-    ("PU", "Orlické hory"),
     ("VY", "Žďárské vrchy"),
     ("ZL", "Javorníky a Bílé Karpaty"),
-    ("OL", "Jeseníky a Králický Sněžník"),
+    ("CB", "Šumava a Novohradské hory"),
+    ("HK", "Krkonoše"),
+    ("LB", "Jizerské hory"),
     ("MT", "Beskydy"),
+    ("OL", "Jeseníky a Králický Sněžník"),
+    ("PL", "Český a Slavkovský les"),
+    ("PU", "Orlické hory"),
+    ("UL", "Krušné hory"),
 ]
 
 # Example region colors
@@ -983,10 +983,24 @@ def fetch_mountain(mountain_code):
 st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
-mode = st.radio("Režim", ["Stanice", "Region", "Textové předpovědi"])
+mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi"])
+
+if "last_mode" not in st.session_state:
+    st.session_state.last_mode = None
+
+if st.session_state.last_mode != mode:
+
+    # leaving Region → always reset region state
+    if st.session_state.last_mode == "Region":
+        st.session_state.selected_element = None
+        st.session_state.region_run = False
+
+    st.session_state.last_mode = mode
 
 # ---------------- STATION MODE ----------------
 if mode == "Stanice":
+
+    st.subheader("Graf vybrané stanice")
 
     station_list = list(stations.keys())
 
@@ -999,14 +1013,27 @@ if mode == "Stanice":
         index=default_index
     )
 
-    if st.button("Zobraz data"):
+    show_data = st.button("Zobraz data")
+
+    # 👇 PLACEHOLDER HERE (after button!)
+    station_placeholder = st.empty()
+
+    if show_data:
         station_info = stations[station_name]
         wsi = station_info["wsi"]
         elevation = station_info["elevation"]
 
         with st.spinner("Načítám data..."):
             df = fetch_station_data(wsi)
-        plot_station(df, station_name, elevation)
+
+        with station_placeholder.container():
+            plot_station(df, station_name, elevation)
+
+    else:
+        station_placeholder.markdown(
+            "<p style='color:#777;'>Zobrazí graf vybrané stanice</p>",
+            unsafe_allow_html=True
+        )
 
 # ---------------- REGION MODE ----------------
 elif mode == "Region":
@@ -1019,8 +1046,6 @@ elif mode == "Region":
         default=list(regions.keys())[0]
     )
 
-    st.subheader("Prvek")
-
     elements_buttons = {
         "Teplota": "T",
         "T přízemní": "TPM",
@@ -1030,23 +1055,46 @@ elif mode == "Region":
         "Vlhkost": "H"
     }
 
-    if "selected_element" not in st.session_state:
-        st.session_state.selected_element = None
+    selected_element_label = st.segmented_control(
+        "Prvek",
+        list(elements_buttons.keys()),
+        key="region_element_selector"
+    )
 
-    cols = st.columns(len(elements_buttons))
+    selected_element = elements_buttons.get(selected_element_label)
 
-    for i, (label, elem) in enumerate(elements_buttons.items()):
-        if cols[i].button(label):
-            st.session_state.selected_element = elem
+    # 👇 INIT
+    if "region_run" not in st.session_state:
+        st.session_state.region_run = False
 
-    if st.session_state.selected_element:
+    if "last_selected_element" not in st.session_state:
+        st.session_state.last_selected_element = None
+
+    # 👇 Detect CHANGE (this is the key)
+    if selected_element != st.session_state.last_selected_element:
+        st.session_state.region_run = True
+        st.session_state.last_selected_element = selected_element
+
+    region_placeholder = st.empty()
+
+    # ---------------- OUTPUT ----------------
+    if st.session_state.region_run and selected_element:
+
         with st.spinner("Načítám data..."):
             plot_region_element(
                 selected_region,
-                st.session_state.selected_element,
+                selected_element,
                 regions,
                 stations
             )
+
+        st.session_state.region_run = False
+
+    else:
+        region_placeholder.markdown(
+            "<p style='color:#777;'>Zobrazí vybraný prvek pro všechny dostupné stanice v kraji do jednoho grafu</p>",
+            unsafe_allow_html=True
+        )
 
 # ---------------- FORECAST MODE ----------------
 elif mode == "Textové předpovědi":
@@ -1056,19 +1104,19 @@ elif mode == "Textové předpovědi":
     # ---------------- STEP 1 ----------------
     mode_choice = st.segmented_control(
         "Co chceš zobrazit?",
-        ["Kraje", "Horské oblasti"],
+        ["Kraje a ČR", "Horské oblasti"],
         key="forecast_type"
     )
 
     active = None
 
     # ---------------- REGIONS ----------------
-    if mode_choice == "Kraje":
+    if mode_choice == "Kraje a ČR":
 
-        st.markdown("### Kraje")
+        st.markdown("### Kraje a ČR")
 
-        region_codes = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","CR"]
-        region_codes_cz = ["KV","PL","UL","SC","PH","CB","LB","HK","PU","VY","OL","JM","MS","ZL","ČR"]
+        region_codes = ["JM","VY","ZL","KV","PL","UL","SC","PH","CB","LB","HK","PU","OL","MS","CR"]
+        region_codes_cz = ["JM","VY","ZL","KV","PL","UL","SC","PH","CB","LB","HK","PU","OL","MS","ČR"]
 
         region_map = dict(zip(region_codes_cz, region_codes))
 
@@ -1104,7 +1152,10 @@ elif mode == "Textové předpovědi":
     with st.spinner("Načítám data..."):
 
         if active is None:
-            forecast_placeholder.markdown("Vyber konkrétní oblast")
+            forecast_placeholder.markdown(
+                "<p style='color:#777;'>Vyber konkrétní oblast</p>",
+                unsafe_allow_html=True
+            )
             st.stop()
 
         kind, value = active
