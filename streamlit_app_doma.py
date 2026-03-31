@@ -1233,7 +1233,13 @@ elif mode == "Srážkové mapy 24h Aladin":
 
     for step in steps:
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
-        valid_time = (run_dt + timedelta(hours=step)).strftime("%d.%m. %H:%M")
+        forecast_time = run_dt + timedelta(hours=step)
+
+        valid_time = (
+            pd.Timestamp(forecast_time, tz="UTC")
+              .tz_convert("Europe/Prague")
+              .strftime("%d.%m. %H:%M")
+        )
 
         st.markdown(
             f"<div style='font-weight:500; margin-bottom:2px;'>"
