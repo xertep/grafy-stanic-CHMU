@@ -785,21 +785,13 @@ mountains = [
     ("UL", "Krušné hory"),
 ]
 
-# Example region colors
-main_region_colors = {"JM": "pink", "ZL": "PaleGreen", "VY": "SkyBlue"}
-other_region_colors = {
-    "CB":"lightgrey", "HK":"lightgrey", "KV":"lightgrey", "LB":"lightgrey",
-    "MS":"lightgrey", "OL":"lightgrey", "PH":"lightgrey", "PL":"lightgrey",
-    "PU":"lightgrey", "SC":"lightgrey", "UL":"lightgrey"
-}
-cr_color = "gold"
-mountain_color = "gray73"
 
-
-def get_latest_file(pattern):
+@st.cache_data(ttl=120)  # cache for 2 minutes
+def get_forecast_listing():
     response = requests.get(BASE_URL_forecasts)
-    html = response.text
+    return response.text
 
+def get_latest_file(pattern, html):
     matches = re.findall(
         r'(web_' + pattern + r'[^"]+\.json)</a>\s+(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2})',
         html
@@ -813,12 +805,11 @@ def get_latest_file(pattern):
 
     matches.sort(key=lambda x: parse_time(x[1]))
 
-    selected = matches[-1][0]
-
-    return BASE_URL_forecasts + selected
+    return BASE_URL_forecasts + matches[-1][0]
 
 
 def fetch_region(region_code):
+    html = get_forecast_listing()
     sender_name = None
     place_name = None
     dalsi_dny_inserted = False
@@ -831,7 +822,7 @@ def fetch_region(region_code):
 
     for pattern, label in forecast_types:
         full_pattern = f"{pattern}{full_pattern_prefix}"
-        url = get_latest_file(full_pattern)
+        url = get_latest_file(full_pattern, html)
         if not url:
             continue
         try:
@@ -952,13 +943,14 @@ def fetch_region(region_code):
 
 
 def fetch_mountain(mountain_code):
+    html = get_forecast_listing()
     sender_name = None
     place_name = None
     output_lines = []
 
     for pattern, label in MOUNTAIN_FORECAST_TYPES:
         full_pattern = f"{pattern}_RP{mountain_code}"
-        url = get_latest_file(full_pattern)
+        url = get_latest_file(full_pattern, html)
         if not url:
             continue
         try:
