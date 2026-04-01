@@ -9,6 +9,7 @@ import math
 from matplotlib.cm import get_cmap
 from streamlit_extras.stylable_container import stylable_container
 import re
+from email.utils import parsedate_to_datetime
 
 
 
@@ -792,11 +793,23 @@ mountain_color = "gray73"
 def get_latest_file(pattern):
     response = requests.get(BASE_URL_forecasts)
     html = response.text
-    matches = re.findall(r'href="(web_' + pattern + r'(?:_[A-Z]{2,3})?[^"]+\.json)"', html)
+
+    matches = re.findall(
+        r'(web_' + pattern + r'[^"]+\.json)</a>\s+(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2})',
+        html
+    )
+
     if not matches:
         return None
-    matches.sort()
-    return BASE_URL_forecasts + matches[-1]
+
+    def parse_time(t):
+        return datetime.strptime(t, "%d-%b-%Y %H:%M")
+
+    matches.sort(key=lambda x: parse_time(x[1]))
+
+    selected = matches[-1][0]
+
+    return BASE_URL_forecasts + selected
 
 
 def fetch_region(region_code):
@@ -1207,11 +1220,6 @@ elif mode == "Srážkové mapy 24h Aladin":
 
     run_dt = datetime.strptime(selected_run, "%Y%m%d%H")
 
-    czech_days = [
-        "pondělí", "úterý", "středy", "čtvrtka",
-        "pátku", "soboty", "neděle"
-    ]
-
     for step in steps:
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
         forecast_time = run_dt + timedelta(hours=step)
@@ -1222,17 +1230,12 @@ elif mode == "Srážkové mapy 24h Aladin":
               .strftime("%d.%m. %H:%M")
         )
 
-        forecast_dt = pd.Timestamp(forecast_time, tz="UTC").tz_convert("Europe/Prague")
-
-        day_name = czech_days[forecast_dt.weekday()]
-
         st.markdown(
             f"<div style='font-weight:500; margin-bottom:2px;'>"
-            f"24h suma srážek do {day_name} {valid_time} hod ▼</div>",
+            f"24h suma srážek do {valid_time} hod ▼</div>",
             unsafe_allow_html=True
         )
 
         st.image(img_url, use_container_width=False)
         st.write("")
-
 
