@@ -791,6 +791,14 @@ def get_forecast_listing():
     response = requests.get(BASE_URL_forecasts)
     return response.text
 
+def transform_evening_to_night(headline):
+    days = ["pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota", "neděle"]
+
+    today = datetime.now()
+    yesterday = today - timedelta(days=1)
+
+    return f"Předpověď na noc {days[yesterday.weekday()]}/{days[today.weekday()]}"
+
 
 def get_latest_file(pattern, html):
     matches = re.findall(
@@ -806,7 +814,11 @@ def get_latest_file(pattern, html):
 
     matches.sort(key=lambda x: parse_time(x[1]))
 
-    return BASE_URL_forecasts + matches[-1][0]
+    filename, time_str = matches[-1]
+
+    dt = datetime.strptime(time_str, "%d-%b-%Y %H:%M")
+
+    return BASE_URL_forecasts + filename, dt
 
 
 def fetch_region(region_code):
@@ -823,9 +835,12 @@ def fetch_region(region_code):
 
     for pattern, label in forecast_types:
         full_pattern = f"{pattern}{full_pattern_prefix}"
-        url = get_latest_file(full_pattern, html)
-        if not url:
+        result = get_latest_file(full_pattern, html)
+        if not result:
             continue
+
+        url, file_time = result
+
         try:
             data = requests.get(url).json()
             features = data.get("data", {}).get("features", [])
@@ -848,7 +863,7 @@ def fetch_region(region_code):
                     if "Počasí (06-22):" in h:
                         morning_found = True
 
-            all_data.append((pattern, headline_main, items, props.get("senderName", "")))
+            all_data.append((pattern, headline_main, items, props.get("senderName", ""), file_time))
 
         except Exception as e:
             st.error(f"Error loading {label}: {e}")
@@ -867,10 +882,38 @@ def fetch_region(region_code):
                 all_data = [x for x in all_data if x[0] != "pCK2tx"]
 
     if region_code == "CR":
+        times = {p: t for p, _, _, _, t in all_data}
+
+        evening_headline = None
+        for p, h, _, _, _ in all_data:
+            if p == "pCR0tx":
+                evening_headline = next(
+                    (h for p, h, _, _, _ in all_data if p == "pCR0tx"),
+                    None
+                )
+
+        evening_update_detected = (
+            "pCR0tx" in times and
+            "pCRntx" in times and
+            times["pCRntx"] > times["pCR0tx"]
+        )
+
+        if evening_update_detected:
+            # remove outdated evening forecast
+            all_data = [x for x in all_data if x[0] != "pCR0tx"]
+
+            # override headline
+            if evening_headline:
+                for i, (p, h, items, sender, t) in enumerate(all_data):
+                    if p == "pCRntx":
+                        new_headline = transform_evening_to_night(evening_headline)
+                        all_data[i] = (p, new_headline, items, sender, t)
+
+    if region_code == "CR":
         seen = {}
 
         for entry in all_data:
-            pattern, headline_main, items, sender = entry
+            pattern, headline_main, items, sender, t = entry
 
             if not headline_main:
                 seen[pattern] = entry
@@ -901,7 +944,7 @@ def fetch_region(region_code):
     if place_name:
         output_lines.append(f'<b>=== Předpověď {place_name} ===</b><br>')
 
-    for pattern, headline_main, items, sender in all_data:
+    for pattern, headline_main, items, sender, t in all_data:
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
             if not (morning_found and pattern == "pCK2tx"):
                 output_lines.append('<br><b>=== Další dny ===</b><br>')
@@ -935,7 +978,7 @@ def fetch_region(region_code):
             if pattern == "pCR8tx" and sender:
                 output_lines.append(f'<br>Meteorolog: {sender}<br>')
 
-    for pattern, _, _, sender in reversed(all_data):
+    for pattern, _, _, sender, _ in reversed(all_data):
         if pattern == "pCK4tx" and sender:
             output_lines.append(f'<br>Meteorolog: {sender}<br>')
             break
