@@ -797,7 +797,7 @@ mountain_color = "gray73"
 
 
 def get_latest_file(pattern):
-    response = requests.get(BASE_URL)
+    response = requests.get(BASE_URL_forecasts)
     html = response.text
 
     matches = re.findall(
