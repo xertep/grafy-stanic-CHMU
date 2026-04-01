@@ -799,15 +799,6 @@ def transform_evening_to_night(file_time):
 
     return f"Předpověď na noc {days[today.weekday()]}/{days[tomorrow.weekday()]}"
 
-def build_evening_night_headline(evening_headline, file_time):
-    days = ["pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota", "neděle"]
-
-    today = file_time
-    tomorrow = today + timedelta(days=1)
-
-    # keep original "večer" headline and append night
-    return f"{evening_headline} a noc {days[today.weekday()]}/{days[tomorrow.weekday()]}"
-
 def get_latest_file(pattern, html):
     matches = re.findall(
         r'(web_' + pattern + r'[^"]+\.json)</a>\s+(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2})',
@@ -873,14 +864,8 @@ def fetch_region(region_code):
 
             all_data.append((pattern, headline_main, items, props.get("senderName", ""), file_time))
 
-
         except Exception as e:
             st.error(f"Error loading {label}: {e}")
-
-    evening_headline_region = next(
-                (h for p, h, _, _, _ in all_data if p == "pCK0tx"),
-                None
-            )
 
     # --- REMOVE duplicate day (pCK1tx vs pCK2tx) ---
     if region_code != "CR":
@@ -956,53 +941,33 @@ def fetch_region(region_code):
     if place_name:
         output_lines.append(f'<b>=== Předpověď {place_name} ===</b><br>')
 
-    for pattern, headline_main, items, sender, item_time in all_data:
-
-        # --- "Další dny" header ---
+    for pattern, headline_main, items, sender, t in all_data:
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
             if not (morning_found and pattern == "pCK2tx"):
                 output_lines.append('<br><b>=== Další dny ===</b><br>')
                 dalsi_dny_inserted = True
 
-        # --- skip duplicates ---
         if evening_found and pattern == "pCK0tx":
             continue
         if morning_found and pattern == "pCK2tx":
             continue
 
-        # --- MAIN HEADLINE BLOCK (region forecasts) ---
-        if region_code != "CR":
+        if pattern not in ["pCKntx", "pCK2tx", "pCK3tx", "pCK4tx", "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"] and headline_main:
+            output_lines.append(f'<br><b>{headline_main}</b><br>')
 
-            # inject BEFORE printing headline_main (ONLY for evening/night block)
-            if pattern == "pCKntx" and evening_headline_region:
-                combined = build_evening_night_headline(evening_headline_region, item_time)
-                output_lines.append(f'<br><b>{combined}</b><br>')
-
-            # print main headline
-            if headline_main:
-                output_lines.append(f'<br><b>{headline_main}</b><br>')
-
-        else:
-            # CR behaves normally (no injection)
-            if headline_main:
-                output_lines.append(f'<br><b>{headline_main}</b><br>')
-
-        # --- items ---
         for item in items:
             h = item.get("headline")
             t = item.get("displayText")
-
             if h:
                 output_lines.append(f'<br><b>{h}</b><br>')
-
             if t:
                 t = t.replace("\xa0", " ")
                 output_lines.append(f'{t}<br>')
 
-        # --- meteorologists ---
         if pattern == "pCK1tx" and sender:
             output_lines.append(f'<br>Meteorolog: {sender}<br>')
 
+        # --- CR meteorologists ---
         if region_code == "CR":
             if pattern == "pCR1tx" and sender:
                 output_lines.append(f'<br>Meteorolog: {sender}<br>')
