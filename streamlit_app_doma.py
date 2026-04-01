@@ -791,14 +791,13 @@ def get_forecast_listing():
     response = requests.get(BASE_URL_forecasts)
     return response.text
 
-def transform_evening_to_night(headline):
+def transform_evening_to_night(file_time):
     days = ["pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota", "neděle"]
 
-    today = datetime.now()
-    yesterday = today - timedelta(days=1)
+    today = file_time
+    tomorrow = today + timedelta(days=1)
 
-    return f"Předpověď na noc {days[yesterday.weekday()]}/{days[today.weekday()]}"
-
+    return f"Předpověď na noc {days[today.weekday()]}/{days[tomorrow.weekday()]}"
 
 def get_latest_file(pattern, html):
     matches = re.findall(
@@ -904,7 +903,7 @@ def fetch_region(region_code):
             if evening_headline:
                 for i, (p, h, items, sender, t) in enumerate(all_data):
                     if p == "pCRntx":
-                        new_headline = transform_evening_to_night(evening_headline)
+                        new_headline = transform_evening_to_night(t)
                         all_data[i] = (p, new_headline, items, sender, t)
 
     if region_code == "CR":
