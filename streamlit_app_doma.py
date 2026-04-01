@@ -11,12 +11,6 @@ from streamlit_extras.stylable_container import stylable_container
 import re
 from email.utils import parsedate_to_datetime
 
-# ---------------- STATE INIT (TOP OF APP) ----------------
-if "selected_element" not in st.session_state:
-    st.session_state.selected_element = None
-
-if "region_run" not in st.session_state:
-    st.session_state.region_run = False
 
 
 # Change browser tab title and favicon
@@ -1024,34 +1018,13 @@ if mode == "Stanice":
         index=default_index
     )
 
-    # --- Shortcut buttons ---
-    col1, col2, col3 = st.columns([2, 1, 1])  # main button + 2 shortcuts
-
-    with col1:
-        btn_main = st.button("Zobraz data")
-
-    with col2:
-        btn_dukovany = st.button("Dukovany")
-
-    with col3:
-        btn_brno = st.button("Brno, Žabovřesky")
-
-    # --- Decide which station to show ---
-    if btn_dukovany:
-        chosen_station = "Dukovany (B2DUKO01)"
-    elif btn_brno:
-        chosen_station = "Brno, Žabovřesky (B2BZAB01)"
-    elif btn_main:
-        chosen_station = station_name
-    else:
-        chosen_station = None
+    show_data = st.button("Zobraz data")
 
     # 👇 PLACEHOLDER HERE (after button!)
     station_placeholder = st.empty()
 
-    # --- Plot section ---
-    if chosen_station:
-        station_info = stations[chosen_station]
+    if show_data:
+        station_info = stations[station_name]
         wsi = station_info["wsi"]
         elevation = station_info["elevation"]
 
@@ -1059,7 +1032,7 @@ if mode == "Stanice":
             df = fetch_station_data(wsi)
 
         with station_placeholder.container():
-            plot_station(df, chosen_station, elevation)
+            plot_station(df, station_name, elevation)
 
     else:
         station_placeholder.markdown(
@@ -1239,11 +1212,6 @@ elif mode == "Srážkové mapy 24h Aladin":
 
     run_dt = datetime.strptime(selected_run, "%Y%m%d%H")
 
-    czech_days = [
-        "pondělí", "úterý", "středy", "čtvrtka",
-        "pátku", "soboty", "neděle"
-    ]
-
     for step in steps:
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
         forecast_time = run_dt + timedelta(hours=step)
@@ -1254,13 +1222,9 @@ elif mode == "Srážkové mapy 24h Aladin":
               .strftime("%d.%m. %H:%M")
         )
 
-        forecast_dt = pd.Timestamp(forecast_time, tz="UTC").tz_convert("Europe/Prague")
-
-        day_name = czech_days[forecast_dt.weekday()]
-
         st.markdown(
             f"<div style='font-weight:500; margin-bottom:2px;'>"
-            f"24h suma srážek do {day_name} {valid_time} hod ▼</div>",
+            f"24h suma srážek do {valid_time} hod ▼</div>",
             unsafe_allow_html=True
         )
 
