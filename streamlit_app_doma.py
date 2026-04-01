@@ -815,7 +815,7 @@ def get_latest_file(pattern):
 
     selected = matches[-1][0]
 
-    return BASE_URL + selected
+    return BASE_URL_forecasts + selected
 
 
 def fetch_region(region_code):
