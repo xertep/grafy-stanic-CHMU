@@ -800,25 +800,21 @@ def get_latest_file(pattern):
     response = requests.get(BASE_URL)
     html = response.text
 
-    # match filename + date line nearby
     matches = re.findall(
         r'(web_' + pattern + r'[^"]+\.json)</a>\s+(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2})',
         html
     )
 
     if not matches:
-        #print(f"{pattern} → NO MATCHES")
         return None
 
     def parse_time(t):
-        return datetime.datetime.strptime(t, "%d-%b-%Y %H:%M")
+        return datetime.strptime(t, "%d-%b-%Y %H:%M")
 
-    # sort by real server time
     matches.sort(key=lambda x: parse_time(x[1]))
 
     selected = matches[-1][0]
 
-    #print(f"{pattern} → SELECTED: {selected}")
     return BASE_URL + selected
 
 
