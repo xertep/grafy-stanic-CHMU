@@ -9,6 +9,8 @@ import math
 from matplotlib.cm import get_cmap
 from streamlit_extras.stylable_container import stylable_container
 import re
+import datetime
+from email.utils import parsedate_to_datetime
 
 # ---------------- STATE INIT (TOP OF APP) ----------------
 if "selected_element" not in st.session_state:
@@ -806,7 +808,7 @@ def get_latest_file(pattern):
     )
 
     if not matches:
-        print(f"{pattern} → NO MATCHES")
+        #print(f"{pattern} → NO MATCHES")
         return None
 
     def parse_time(t):
@@ -817,7 +819,7 @@ def get_latest_file(pattern):
 
     selected = matches[-1][0]
 
-    print(f"{pattern} → SELECTED: {selected}")
+    #print(f"{pattern} → SELECTED: {selected}")
     return BASE_URL + selected
 
 
