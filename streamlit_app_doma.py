@@ -885,12 +885,10 @@ def fetch_region(region_code):
         times = {p: t for p, _, _, _, t in all_data}
 
         evening_headline = None
-        for p, h, _, _, _ in all_data:
-            if p == "pCR0tx":
-                evening_headline = next(
-                    (h for p, h, _, _, _ in all_data if p == "pCR0tx"),
-                    None
-                )
+        evening_headline = next(
+            (h for p, h, _, _, _ in all_data if p == "pCR0tx"),
+            None
+        )
 
         evening_update_detected = (
             "pCR0tx" in times and
@@ -955,7 +953,7 @@ def fetch_region(region_code):
         if morning_found and pattern == "pCK2tx":
             continue
 
-        if pattern not in ["pCKntx", "pCK2tx", "pCK3tx", "pCK4tx", "pCRntx", "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"] and headline_main:
+        if pattern not in ["pCKntx", "pCK2tx", "pCK3tx", "pCK4tx", "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"] and headline_main:
             output_lines.append(f'<br><b>{headline_main}</b><br>')
 
         for item in items:
