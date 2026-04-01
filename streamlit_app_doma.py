@@ -11,6 +11,12 @@ from streamlit_extras.stylable_container import stylable_container
 import re
 from email.utils import parsedate_to_datetime
 
+# ---------------- STATE INIT (TOP OF APP) ----------------
+if "selected_element" not in st.session_state:
+    st.session_state.selected_element = None
+
+if "region_run" not in st.session_state:
+    st.session_state.region_run = False
 
 
 # Change browser tab title and favicon
@@ -785,6 +791,10 @@ def get_forecast_listing():
     response = requests.get(BASE_URL_forecasts)
     return response.text
 
+@st.cache_data(ttl=120)
+def fetch_json(url):
+    return requests.get(url).json()
+
 def get_latest_file(pattern, html):
     matches = re.findall(
         r'(web_' + pattern + r'[^"]+\.json)</a>\s+(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2})',
@@ -820,7 +830,7 @@ def fetch_region(region_code):
         if not url:
             continue
         try:
-            data = requests.get(url).json()
+            data = fetch_json(url)
             features = data.get("data", {}).get("features", [])
             if not features:
                 continue
@@ -948,7 +958,7 @@ def fetch_mountain(mountain_code):
         if not url:
             continue
         try:
-            data = requests.get(url).json()
+            data = fetch_json(url)
             features = data.get("data", {}).get("features", [])
             if not features:
                 continue
@@ -1018,13 +1028,34 @@ if mode == "Stanice":
         index=default_index
     )
 
-    show_data = st.button("Zobraz data")
+    # --- Shortcut buttons ---
+    col1, col2, col3 = st.columns([2, 1, 1])  # main button + 2 shortcuts
+
+    with col1:
+        btn_main = st.button("Zobraz data")
+
+    with col2:
+        btn_dukovany = st.button("Dukovany")
+
+    with col3:
+        btn_brno = st.button("Brno, Žabovřesky")
+
+    # --- Decide which station to show ---
+    if btn_dukovany:
+        chosen_station = "Dukovany (B2DUKO01)"
+    elif btn_brno:
+        chosen_station = "Brno, Žabovřesky (B2BZAB01)"
+    elif btn_main:
+        chosen_station = station_name
+    else:
+        chosen_station = None
 
     # 👇 PLACEHOLDER HERE (after button!)
     station_placeholder = st.empty()
 
-    if show_data:
-        station_info = stations[station_name]
+    # --- Plot section ---
+    if chosen_station:
+        station_info = stations[chosen_station]
         wsi = station_info["wsi"]
         elevation = station_info["elevation"]
 
@@ -1032,7 +1063,7 @@ if mode == "Stanice":
             df = fetch_station_data(wsi)
 
         with station_placeholder.container():
-            plot_station(df, station_name, elevation)
+            plot_station(df, chosen_station, elevation)
 
     else:
         station_placeholder.markdown(
@@ -1212,6 +1243,11 @@ elif mode == "Srážkové mapy 24h Aladin":
 
     run_dt = datetime.strptime(selected_run, "%Y%m%d%H")
 
+    czech_days = [
+        "pondělí", "úterý", "středy", "čtvrtka",
+        "pátku", "soboty", "neděle"
+    ]
+
     for step in steps:
         img_url = f"{BASE_URL_FLOODS}floods_prec24h_{selected_run}+{step}.png"
         forecast_time = run_dt + timedelta(hours=step)
@@ -1222,9 +1258,13 @@ elif mode == "Srážkové mapy 24h Aladin":
               .strftime("%d.%m. %H:%M")
         )
 
+        forecast_dt = pd.Timestamp(forecast_time, tz="UTC").tz_convert("Europe/Prague")
+
+        day_name = czech_days[forecast_dt.weekday()]
+
         st.markdown(
             f"<div style='font-weight:500; margin-bottom:2px;'>"
-            f"24h suma srážek do {valid_time} hod ▼</div>",
+            f"24h suma srážek do {day_name} {valid_time} hod ▼</div>",
             unsafe_allow_html=True
         )
 
