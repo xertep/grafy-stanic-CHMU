@@ -791,9 +791,6 @@ def get_forecast_listing():
     response = requests.get(BASE_URL_forecasts)
     return response.text
 
-@st.cache_data(ttl=120)
-def fetch_json(url):
-    return requests.get(url).json()
 
 def get_latest_file(pattern, html):
     matches = re.findall(
@@ -830,7 +827,7 @@ def fetch_region(region_code):
         if not url:
             continue
         try:
-            data = fetch_json(url)
+            data = requests.get(url).json()
             features = data.get("data", {}).get("features", [])
             if not features:
                 continue
@@ -958,7 +955,7 @@ def fetch_mountain(mountain_code):
         if not url:
             continue
         try:
-            data = fetch_json(url)
+            data = requests.get(url).json()
             features = data.get("data", {}).get("features", [])
             if not features:
                 continue
