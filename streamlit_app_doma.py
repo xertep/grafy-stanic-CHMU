@@ -785,6 +785,16 @@ mountains = [
     ("UL", "Krušné hory"),
 ]
 
+CZECH_DAYS_GENITIVE = {
+    0: "pondělí",
+    1: "úterý",
+    2: "středy",
+    3: "čtvrtka",
+    4: "pátku",
+    5: "soboty",
+    6: "neděle",
+}
+
 
 @st.cache_data(ttl=120)  # cache for 2 minutes
 def get_forecast_listing():
@@ -880,8 +890,11 @@ def fetch_region(region_code):
                 start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
                 end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
 
-                start_str = start_dt.strftime("od %A %-d.%-m.")
-                end_str = end_dt.strftime("do %A %-d.%-m.%Y")
+                start_day = CZECH_DAYS_GENITIVE[start_dt.weekday()]
+                end_day = CZECH_DAYS_GENITIVE[end_dt.weekday()]
+
+                start_str = f"od {start_day} {start_dt.day}.{start_dt.month}."
+                end_str = f"do {end_day} {end_dt.day}.{end_dt.month}.{end_dt.year}"
 
                 date_range_text = f"{start_str} {end_str}"
 
