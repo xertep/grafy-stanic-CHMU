@@ -1029,9 +1029,12 @@ def fetch_mountain(mountain_code):
 
     for pattern, label in MOUNTAIN_FORECAST_TYPES:
         full_pattern = f"{pattern}_RP{mountain_code}"
-        url = get_latest_file(full_pattern, html)
-        if not url:
+        result = get_latest_file(full_pattern, html)
+        if not result:
             continue
+
+        url, _ = result
+        
         try:
             data = requests.get(url).json()
             features = data.get("data", {}).get("features", [])
