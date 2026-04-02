@@ -868,25 +868,25 @@ def fetch_region(region_code):
             st.error(f"Error loading {label}: {e}")
 
     if region_code != "CR":
-    pckn = next((x for x in all_data if x[0] == "pCKntx"), None)
-    pck4 = next((x for x in all_data if x[0] == "pCK4tx"), None)
+        pckn = next((x for x in all_data if x[0] == "pCKntx"), None)
+        pck4 = next((x for x in all_data if x[0] == "pCK4tx"), None)
 
-    if pckn and pck4:
-        try:
-            # first item in data list
-            start_time = pckn[2][0].get("startTime")
-            end_time = pck4[2][0].get("endTime")
+        if pckn and pck4:
+            try:
+                # first item in data list
+                start_time = pckn[2][0].get("startTime")
+                end_time = pck4[2][0].get("endTime")
 
-            start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
-            end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
+                start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+                end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
 
-            start_str = start_dt.strftime("od %A %-d.%-m.")
-            end_str = end_dt.strftime("do %A %-d.%-m.%Y")
+                start_str = start_dt.strftime("od %A %-d.%-m.")
+                end_str = end_dt.strftime("do %A %-d.%-m.%Y")
 
-            date_range_text = f"{start_str} {end_str}"
+                date_range_text = f"{start_str} {end_str}"
 
-        except Exception:
-            pass
+            except Exception:
+                pass
 
     # --- REMOVE duplicate day (pCK1tx vs pCK2tx) ---
     if region_code != "CR":
