@@ -838,6 +838,7 @@ def fetch_region(region_code):
     evening_found = False
     morning_found = False
     all_data = []
+    date_range_text = None
 
     forecast_types = CR_FORECAST_TYPES if region_code == "CR" else REGION_FORECAST_TYPES
     full_pattern_prefix = "" if region_code == "CR" else f"_RP{region_code}"
