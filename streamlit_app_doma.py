@@ -867,6 +867,27 @@ def fetch_region(region_code):
         except Exception as e:
             st.error(f"Error loading {label}: {e}")
 
+    if region_code != "CR":
+    pckn = next((x for x in all_data if x[0] == "pCKntx"), None)
+    pck4 = next((x for x in all_data if x[0] == "pCK4tx"), None)
+
+    if pckn and pck4:
+        try:
+            # first item in data list
+            start_time = pckn[2][0].get("startTime")
+            end_time = pck4[2][0].get("endTime")
+
+            start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+            end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
+
+            start_str = start_dt.strftime("od %A %-d.%-m.")
+            end_str = end_dt.strftime("do %A %-d.%-m.%Y")
+
+            date_range_text = f"{start_str} {end_str}"
+
+        except Exception:
+            pass
+
     # --- REMOVE duplicate day (pCK1tx vs pCK2tx) ---
     if region_code != "CR":
         pck1 = next((x for x in all_data if x[0] == "pCK1tx"), None)
@@ -940,6 +961,9 @@ def fetch_region(region_code):
 
     if place_name:
         output_lines.append(f'<b>=== Předpověď {place_name} ===</b><br>')
+
+        if date_range_text:
+            output_lines.append(f'{date_range_text}<br>')
 
     for pattern, headline_main, items, sender, t in all_data:
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
