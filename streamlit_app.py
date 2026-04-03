@@ -779,21 +779,31 @@ mountains = [
     ("UL", "Krušné hory"),
 ]
 
-# Example region colors
-main_region_colors = {"JM": "pink", "ZL": "PaleGreen", "VY": "SkyBlue"}
-other_region_colors = {
-    "CB":"lightgrey", "HK":"lightgrey", "KV":"lightgrey", "LB":"lightgrey",
-    "MS":"lightgrey", "OL":"lightgrey", "PH":"lightgrey", "PL":"lightgrey",
-    "PU":"lightgrey", "SC":"lightgrey", "UL":"lightgrey"
+CZECH_DAYS_GENITIVE = {
+    0: "pondělí",
+    1: "úterý",
+    2: "středy",
+    3: "čtvrtka",
+    4: "pátku",
+    5: "soboty",
+    6: "neděle",
 }
-cr_color = "gold"
-mountain_color = "gray73"
 
 
-def get_latest_file(pattern):
+@st.cache_data(ttl=120)  # cache for 2 minutes
+def get_forecast_listing():
     response = requests.get(BASE_URL_forecasts)
-    html = response.text
+    return response.text
 
+def transform_evening_to_night(file_time):
+    days = ["pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota", "neděle"]
+
+    today = file_time
+    tomorrow = today + timedelta(days=1)
+
+    return f"Předpověď na noc {days[today.weekday()]}/{days[tomorrow.weekday()]}"
+
+def get_latest_file(pattern, html):
     matches = re.findall(
         r'(web_' + pattern + r'[^"]+\.json)</a>\s+(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2})',
         html
@@ -807,27 +817,34 @@ def get_latest_file(pattern):
 
     matches.sort(key=lambda x: parse_time(x[1]))
 
-    selected = matches[-1][0]
+    filename, time_str = matches[-1]
 
-    return BASE_URL_forecasts + selected
+    dt = datetime.strptime(time_str, "%d-%b-%Y %H:%M")
+
+    return BASE_URL_forecasts + filename, dt
 
 
 def fetch_region(region_code):
+    html = get_forecast_listing()
     sender_name = None
     place_name = None
     dalsi_dny_inserted = False
     evening_found = False
     morning_found = False
     all_data = []
+    date_range_text = None
 
     forecast_types = CR_FORECAST_TYPES if region_code == "CR" else REGION_FORECAST_TYPES
     full_pattern_prefix = "" if region_code == "CR" else f"_RP{region_code}"
 
     for pattern, label in forecast_types:
         full_pattern = f"{pattern}{full_pattern_prefix}"
-        url = get_latest_file(full_pattern)
-        if not url:
+        result = get_latest_file(full_pattern, html)
+        if not result:
             continue
+
+        url, file_time = result
+
         try:
             data = requests.get(url).json()
             features = data.get("data", {}).get("features", [])
@@ -850,10 +867,34 @@ def fetch_region(region_code):
                     if "Počasí (06-22):" in h:
                         morning_found = True
 
-            all_data.append((pattern, headline_main, items, props.get("senderName", "")))
+            all_data.append((pattern, headline_main, items, props.get("senderName", ""), file_time))
 
         except Exception as e:
             st.error(f"Error loading {label}: {e}")
+
+    if region_code != "CR":
+        pckn = next((x for x in all_data if x[0] == "pCKntx"), None)
+        pck4 = next((x for x in all_data if x[0] == "pCK4tx"), None)
+
+        if pckn and pck4:
+            try:
+                # first item in data list
+                start_time = pckn[2][0].get("startTime")
+                end_time = pck4[2][0].get("endTime")
+
+                start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+                end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
+
+                start_day = CZECH_DAYS_GENITIVE[start_dt.weekday()]
+                end_day = CZECH_DAYS_GENITIVE[end_dt.weekday()]
+
+                start_str = f"od {start_day} {start_dt.day}.{start_dt.month}."
+                end_str = f"do {end_day} {end_dt.day}.{end_dt.month}.{end_dt.year}"
+
+                date_range_text = f"{start_str} {end_str}"
+
+            except Exception:
+                pass
 
     # --- REMOVE duplicate day (pCK1tx vs pCK2tx) ---
     if region_code != "CR":
@@ -869,10 +910,36 @@ def fetch_region(region_code):
                 all_data = [x for x in all_data if x[0] != "pCK2tx"]
 
     if region_code == "CR":
+        times = {p: t for p, _, _, _, t in all_data}
+
+        evening_headline = None
+        evening_headline = next(
+            (h for p, h, _, _, _ in all_data if p == "pCR0tx"),
+            None
+        )
+
+        evening_update_detected = (
+            "pCR0tx" in times and
+            "pCRntx" in times and
+            times["pCRntx"] > times["pCR0tx"]
+        )
+
+        if evening_update_detected:
+            # remove outdated evening forecast
+            all_data = [x for x in all_data if x[0] != "pCR0tx"]
+
+            # override headline
+            if evening_headline:
+                for i, (p, h, items, sender, t) in enumerate(all_data):
+                    if p == "pCRntx":
+                        new_headline = transform_evening_to_night(t)
+                        all_data[i] = (p, new_headline, items, sender, t)
+
+    if region_code == "CR":
         seen = {}
 
         for entry in all_data:
-            pattern, headline_main, items, sender = entry
+            pattern, headline_main, items, sender, t = entry
 
             if not headline_main:
                 seen[pattern] = entry
@@ -903,7 +970,10 @@ def fetch_region(region_code):
     if place_name:
         output_lines.append(f'<b>=== Předpověď {place_name} ===</b><br>')
 
-    for pattern, headline_main, items, sender in all_data:
+        if date_range_text:
+            output_lines.append(f'{date_range_text}<br>')
+
+    for pattern, headline_main, items, sender, t in all_data:
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
             if not (morning_found and pattern == "pCK2tx"):
                 output_lines.append('<br><b>=== Další dny ===</b><br>')
@@ -914,7 +984,7 @@ def fetch_region(region_code):
         if morning_found and pattern == "pCK2tx":
             continue
 
-        if pattern not in ["pCKntx", "pCK2tx", "pCK3tx", "pCK4tx", "pCRntx", "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"] and headline_main:
+        if pattern not in ["pCKntx", "pCK2tx", "pCK3tx", "pCK4tx", "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"] and headline_main:
             output_lines.append(f'<br><b>{headline_main}</b><br>')
 
         for item in items:
@@ -937,7 +1007,7 @@ def fetch_region(region_code):
             if pattern == "pCR8tx" and sender:
                 output_lines.append(f'<br>Meteorolog: {sender}<br>')
 
-    for pattern, _, _, sender in reversed(all_data):
+    for pattern, _, _, sender, _ in reversed(all_data):
         if pattern == "pCK4tx" and sender:
             output_lines.append(f'<br>Meteorolog: {sender}<br>')
             break
@@ -946,15 +1016,19 @@ def fetch_region(region_code):
 
 
 def fetch_mountain(mountain_code):
+    html = get_forecast_listing()
     sender_name = None
     place_name = None
     output_lines = []
 
     for pattern, label in MOUNTAIN_FORECAST_TYPES:
         full_pattern = f"{pattern}_RP{mountain_code}"
-        url = get_latest_file(full_pattern)
-        if not url:
+        result = get_latest_file(full_pattern, html)
+        if not result:
             continue
+
+        url, _ = result
+        
         try:
             data = requests.get(url).json()
             features = data.get("data", {}).get("features", [])
