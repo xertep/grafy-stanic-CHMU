@@ -1033,6 +1033,7 @@ def fetch_region(region_code):
                     if formatted:
                         output_lines.append(f'<br>{formatted}<br>')
                 output_lines.append(f'Meteorolog: {sender}<br>')
+                output_lines.append('<br><b>=== Další dny ===</b><br>')
 
             if pattern == "pCR8tx" and sender:
                 if created:
