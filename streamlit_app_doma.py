@@ -932,11 +932,11 @@ def fetch_region(region_code):
                 all_data = [x for x in all_data if x[0] != "pCK2tx"]
 
     if region_code == "CR":
-        times = {p: t for p, _, _, _, t in all_data}
+        times = {p: t for p, _, _, _, t, _ in all_data}
 
         evening_headline = None
         evening_headline = next(
-            (h for p, h, _, _, _ in all_data if p == "pCR0tx"),
+            (h for p, h, _, _, _, _ in all_data if p == "pCR0tx"),
             None
         )
 
@@ -952,16 +952,16 @@ def fetch_region(region_code):
 
             # override headline
             if evening_headline:
-                for i, (p, h, items, sender, t) in enumerate(all_data):
+                for i, (p, h, items, sender, t, created) in enumerate(all_data):
                     if p == "pCRntx":
                         new_headline = transform_evening_to_night(t)
-                        all_data[i] = (p, new_headline, items, sender, t)
+                        all_data[i] = (p, new_headline, items, sender, t, created)
 
     if region_code == "CR":
         seen = {}
 
         for entry in all_data:
-            pattern, headline_main, items, sender, t = entry
+            pattern, headline_main, items, sender, t, created = entry
 
             if not headline_main:
                 seen[pattern] = entry
@@ -1091,12 +1091,12 @@ def fetch_mountain(mountain_code):
 
             for item in items:
                 h = item.get("headline")
-                t = item.get("displayText")
+                text = item.get("displayText")
                 if h:
                     output_lines.append(f'<br><b>{h}</b><br>')
-                if t:
-                    t = t.replace("\xa0", " ")
-                    output_lines.append(f'{t}<br>')
+                if text:
+                    text = text.replace("\xa0", " ")
+                    output_lines.append(f'{text}<br>')
 
         except Exception as e:
             st.error(f"Error loading {label} ({mountain_code}): {e}")
