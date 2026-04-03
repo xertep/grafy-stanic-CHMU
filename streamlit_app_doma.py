@@ -820,7 +820,7 @@ def format_update_time(utc_string):
         dt_local = dt_utc.astimezone(local_tz)
 
         # format: 16.4.2026 17:52
-        return f"Aktualizováno {dt_local.day}.{dt_local.month}.{dt_local.year} {dt_local.strftime('%H:%M')} ↑"
+        return f"Aktualizováno {dt_local.day}.{dt_local.month}.{dt_local.year} {dt_local.strftime('%H:%M')} ⭡"
     except Exception:
         return None
 
