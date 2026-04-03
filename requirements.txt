@@ -4,3 +4,4 @@ matplotlib
 requests
 numpy
 streamlit-extras
+pytz
