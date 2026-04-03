@@ -820,7 +820,7 @@ def format_update_time(utc_string):
         dt_local = dt_utc.astimezone(local_tz)
 
         # format: 16.4.2026 17:52
-        return f"Aktualizováno {dt_local.day}.{dt_local.month}.{dt_local.year} {dt_local.strftime('%H:%M')}"
+        return f"Aktualizováno {dt_local.day}.{dt_local.month}.{dt_local.year} {dt_local.strftime('%H:%M')} ↑"
     except Exception:
         return None
 
@@ -1023,7 +1023,7 @@ def fetch_region(region_code):
                 formatted = format_update_time(created)
                 if formatted:
                     output_lines.append(f'<br>{formatted}<br>')
-            output_lines.append(f'<br>Meteorolog: {sender}<br>')
+            output_lines.append(f'Meteorolog: {sender}<br>')
 
         # --- CR meteorologists ---
         if region_code == "CR":
@@ -1032,14 +1032,14 @@ def fetch_region(region_code):
                     formatted = format_update_time(created)
                     if formatted:
                         output_lines.append(f'<br>{formatted}<br>')
-                output_lines.append(f'<br>Meteorolog: {sender}<br>')
+                output_lines.append(f'Meteorolog: {sender}<br>')
 
             if pattern == "pCR8tx" and sender:
                 if created:
                     formatted = format_update_time(created)
                     if formatted:
                         output_lines.append(f'<br>{formatted}<br>')
-                output_lines.append(f'<br>Meteorolog: {sender}<br>')
+                output_lines.append(f'Meteorolog: {sender}<br>')
 
     for pattern, _, _, sender, _, created in reversed(all_data):
         if pattern == "pCK4tx" and sender:
@@ -1047,7 +1047,7 @@ def fetch_region(region_code):
                 formatted = format_update_time(created)
                 if formatted:
                     output_lines.append(f'<br>{formatted}<br>')
-            output_lines.append(f'<br>Meteorolog: {sender}<br>')
+            output_lines.append(f'Meteorolog: {sender}<br>')
             break
 
     return "".join(output_lines)
@@ -1108,7 +1108,7 @@ def fetch_mountain(mountain_code):
             formatted = format_update_time(update_time)
             if formatted:
                 output_lines.append(f'<br>{formatted}<br>')
-        output_lines.append(f'<br>Meteorolog: {sender_name}<br>')
+        output_lines.append(f'Meteorolog: {sender_name}<br>')
 
     return "".join(output_lines)
 
