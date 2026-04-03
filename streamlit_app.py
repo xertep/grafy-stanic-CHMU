@@ -10,6 +10,7 @@ from matplotlib.cm import get_cmap
 from streamlit_extras.stylable_container import stylable_container
 import re
 from email.utils import parsedate_to_datetime
+import pytz
 
 
 
@@ -803,6 +804,20 @@ def transform_evening_to_night(file_time):
 
     return f"Předpověď na noc {days[today.weekday()]}/{days[tomorrow.weekday()]}"
 
+def format_update_time(utc_string):
+    try:
+        # parse UTC time
+        dt_utc = datetime.fromisoformat(utc_string.replace("Z", "+00:00"))
+
+        # convert to Czech local time
+        local_tz = pytz.timezone("Europe/Prague")
+        dt_local = dt_utc.astimezone(local_tz)
+
+        # format: 16.4.2026 17:52
+        return f"Aktualizováno {dt_local.day}.{dt_local.month}.{dt_local.year} {dt_local.strftime('%H:%M')} ⬆"
+    except Exception:
+        return None
+
 def get_latest_file(pattern, html):
     matches = re.findall(
         r'(web_' + pattern + r'[^"]+\.json)</a>\s+(\d{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2})',
@@ -847,6 +862,7 @@ def fetch_region(region_code):
 
         try:
             data = requests.get(url).json()
+            datum_vytvoreni = data.get("datumVytvoreni")
             features = data.get("data", {}).get("features", [])
             if not features:
                 continue
@@ -867,7 +883,7 @@ def fetch_region(region_code):
                     if "Počasí (06-22):" in h:
                         morning_found = True
 
-            all_data.append((pattern, headline_main, items, props.get("senderName", ""), file_time))
+            all_data.append((pattern, headline_main, items, props.get("senderName", ""), file_time, datum_vytvoreni))
 
         except Exception as e:
             st.error(f"Error loading {label}: {e}")
@@ -910,11 +926,11 @@ def fetch_region(region_code):
                 all_data = [x for x in all_data if x[0] != "pCK2tx"]
 
     if region_code == "CR":
-        times = {p: t for p, _, _, _, t in all_data}
+        times = {p: t for p, _, _, _, t, _ in all_data}
 
         evening_headline = None
         evening_headline = next(
-            (h for p, h, _, _, _ in all_data if p == "pCR0tx"),
+            (h for p, h, _, _, _, _ in all_data if p == "pCR0tx"),
             None
         )
 
@@ -930,16 +946,16 @@ def fetch_region(region_code):
 
             # override headline
             if evening_headline:
-                for i, (p, h, items, sender, t) in enumerate(all_data):
+                for i, (p, h, items, sender, t, created) in enumerate(all_data):
                     if p == "pCRntx":
                         new_headline = transform_evening_to_night(t)
-                        all_data[i] = (p, new_headline, items, sender, t)
+                        all_data[i] = (p, new_headline, items, sender, t, created)
 
     if region_code == "CR":
         seen = {}
 
         for entry in all_data:
-            pattern, headline_main, items, sender, t = entry
+            pattern, headline_main, items, sender, t, created = entry
 
             if not headline_main:
                 seen[pattern] = entry
@@ -973,7 +989,7 @@ def fetch_region(region_code):
         if date_range_text:
             output_lines.append(f'{date_range_text}<br>')
 
-    for pattern, headline_main, items, sender, t in all_data:
+    for pattern, headline_main, items, sender, t, created in all_data:
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
             if not (morning_found and pattern == "pCK2tx"):
                 output_lines.append('<br><b>=== Další dny ===</b><br>')
@@ -997,19 +1013,35 @@ def fetch_region(region_code):
                 output_lines.append(f'{t}<br>')
 
         if pattern == "pCK1tx" and sender:
-            output_lines.append(f'<br>Meteorolog: {sender}<br>')
+            if created:
+                formatted = format_update_time(created)
+                if formatted:
+                    output_lines.append(f'<br>{formatted}<br>')
+            output_lines.append(f'Meteorolog: {sender}<br>')
 
         # --- CR meteorologists ---
         if region_code == "CR":
             if pattern == "pCR1tx" and sender:
-                output_lines.append(f'<br>Meteorolog: {sender}<br>')
+                if created:
+                    formatted = format_update_time(created)
+                    if formatted:
+                        output_lines.append(f'<br>{formatted}<br>')
+                output_lines.append(f'Meteorolog: {sender}<br>')
 
             if pattern == "pCR8tx" and sender:
-                output_lines.append(f'<br>Meteorolog: {sender}<br>')
+                if created:
+                    formatted = format_update_time(created)
+                    if formatted:
+                        output_lines.append(f'<br>{formatted}<br>')
+                output_lines.append(f'Meteorolog: {sender}<br>')
 
-    for pattern, _, _, sender, _ in reversed(all_data):
+    for pattern, _, _, sender, _, created in reversed(all_data):
         if pattern == "pCK4tx" and sender:
-            output_lines.append(f'<br>Meteorolog: {sender}<br>')
+            if created:
+                formatted = format_update_time(created)
+                if formatted:
+                    output_lines.append(f'<br>{formatted}<br>')
+            output_lines.append(f'Meteorolog: {sender}<br>')
             break
 
     return "".join(output_lines)
@@ -1020,6 +1052,7 @@ def fetch_mountain(mountain_code):
     sender_name = None
     place_name = None
     output_lines = []
+    update_time = None
 
     for pattern, label in MOUNTAIN_FORECAST_TYPES:
         full_pattern = f"{pattern}_RP{mountain_code}"
@@ -1031,6 +1064,7 @@ def fetch_mountain(mountain_code):
         
         try:
             data = requests.get(url).json()
+            datum_vytvoreni = data.get("datumVytvoreni")
             features = data.get("data", {}).get("features", [])
             if not features:
                 continue
@@ -1040,6 +1074,9 @@ def fetch_mountain(mountain_code):
             if not sender_name:
                 sender_name = props.get("senderName", "")
 
+            if pattern == "pCH2tx":
+                update_time = datum_vytvoreni
+
             headline_main = props.get("headline-main", {}).get("headline", "")
             items = sorted(props.get("data", []), key=lambda x: x.get("displayOrder", 0))
 
@@ -1048,12 +1085,12 @@ def fetch_mountain(mountain_code):
 
             for item in items:
                 h = item.get("headline")
-                t = item.get("displayText")
+                text = item.get("displayText")
                 if h:
                     output_lines.append(f'<br><b>{h}</b><br>')
-                if t:
-                    t = t.replace("\xa0", " ")
-                    output_lines.append(f'{t}<br>')
+                if text:
+                    text = text.replace("\xa0", " ")
+                    output_lines.append(f'{text}<br>')
 
         except Exception as e:
             st.error(f"Error loading {label} ({mountain_code}): {e}")
@@ -1061,7 +1098,11 @@ def fetch_mountain(mountain_code):
     if place_name:
         output_lines.insert(0, f'<b>=== Předpověď {place_name} ===</b><br>')
     if sender_name:
-        output_lines.append(f'<br>Meteorolog: {sender_name}<br>')
+        if update_time:
+            formatted = format_update_time(update_time)
+            if formatted:
+                output_lines.append(f'<br>{formatted}<br>')
+        output_lines.append(f'Meteorolog: {sender_name}<br>')
 
     return "".join(output_lines)
 
