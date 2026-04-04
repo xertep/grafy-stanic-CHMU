@@ -1050,6 +1050,13 @@ def fetch_region(region_code):
                         output_lines.append(f'<br>{formatted}<br>')
                 output_lines.append(f'Meteorolog: {sender}<br>')
 
+            if pattern == "pCR8ts" and sender:
+                if created:
+                    formatted = format_update_time(created)
+                    if formatted:
+                        output_lines.append(f'<br>{formatted}<br>')
+                output_lines.append(f'Meteorolog: {sender}<br>')
+
     for pattern, _, _, sender, _, created in reversed(all_data):
         if pattern == "pCK4tx" and sender:
             if created:
