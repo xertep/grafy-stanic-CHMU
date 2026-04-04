@@ -1035,6 +1035,22 @@ def fetch_region(region_code):
                 output_lines.append(f'Meteorolog: {sender}<br>')
                 output_lines.append('<br><b>=== Další dny ===</b><br>')
 
+            # NEW: pCR4tx
+            if pattern == "pCR4tx" and sender:
+                if created:
+                    formatted = format_update_time(created)
+                    if formatted:
+                        output_lines.append(f'<br>{formatted}<br>')
+                output_lines.append(f'Meteorolog: {sender}<br>')
+
+            # NEW: pCR5tx
+            if pattern == "pCR5tx" and sender:
+                if created:
+                    formatted = format_update_time(created)
+                    if formatted:
+                        output_lines.append(f'<br>{formatted}<br>')
+                output_lines.append(f'Meteorolog: {sender}<br>')
+
             if pattern == "pCR8tx" and sender:
                 if created:
                     formatted = format_update_time(created)
