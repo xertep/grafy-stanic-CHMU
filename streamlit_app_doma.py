@@ -995,6 +995,7 @@ def fetch_region(region_code):
         if date_range_text:
             output_lines.append(f'{date_range_text}<br>')
 
+    has_day = any(p == "pCR0tx" for p, *_ in all_data)
     for pattern, headline_main, items, sender, t, created in all_data:
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
             if not (morning_found and pattern == "pCK2tx"):
@@ -1006,8 +1007,15 @@ def fetch_region(region_code):
         if morning_found and pattern == "pCK2tx":
             continue
 
-        if pattern not in ["pCKntx", "pCK2tx", "pCK3tx", "pCK4tx", "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"] and headline_main:
-            output_lines.append(f'<br><b>{headline_main}</b><br>')
+        if pattern not in [
+            "pCKntx", "pCK2tx", "pCK3tx", "pCK4tx",
+            "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"
+        ] and headline_main:
+            
+            if pattern == "pCRntx" and has_day:
+                pass  # skip night headline if day exists
+            else:
+                output_lines.append(f'<br><b>{headline_main}</b><br>')
 
         for item in items:
             h = item.get("headline")
