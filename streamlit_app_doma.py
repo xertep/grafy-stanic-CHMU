@@ -1006,7 +1006,7 @@ def fetch_region(region_code):
         if morning_found and pattern == "pCK2tx":
             continue
 
-        if pattern not in ["pCKntx", "pCK2tx", "pCK3tx", "pCK4tx", "pCRntx", "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"] and headline_main:
+        if pattern not in ["pCKntx", "pCK2tx", "pCK3tx", "pCK4tx", "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"] and headline_main:
             output_lines.append(f'<br><b>{headline_main}</b><br>')
 
         for item in items:
