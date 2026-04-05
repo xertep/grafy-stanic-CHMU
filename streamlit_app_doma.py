@@ -931,6 +931,28 @@ def fetch_region(region_code):
                 # remove pCK2tx (duplicate day)
                 all_data = [x for x in all_data if x[0] != "pCK2tx"]
 
+    # --- MERGE NIGHT + NEXT DAY HEADLINE (regions only) ---
+    if region_code != "CR":
+        pckn = next((x for x in all_data if x[0] == "pCKntx"), None)
+        pck1 = next((x for x in all_data if x[0] == "pCK1tx"), None)
+
+        if pckn and pck1:
+            night_pattern, night_headline, night_items, night_sender, night_time, night_created = pckn
+            day_pattern, day_headline, day_items, day_sender, day_time, day_created = pck1
+
+            if night_headline and day_headline:
+                last_word = day_headline.strip().split()[-1]
+                merged_headline = f"{night_headline} a {last_word}"
+
+                # update night headline
+                for i, (p, h, items, sender, t, created) in enumerate(all_data):
+                    if p == "pCKntx":
+                        all_data[i] = (p, merged_headline, items, sender, t, created)
+
+            for i, (p, h, items, sender, t, created) in enumerate(all_data):
+                if p == "pCK1tx":
+                    all_data[i] = (p, "", items, sender, t, created)
+
     if region_code == "CR":
         times = {p: t for p, _, _, _, t, _ in all_data}
 
@@ -1008,7 +1030,7 @@ def fetch_region(region_code):
             continue
 
         if pattern not in [
-            "pCKntx", "pCK2tx", "pCK3tx", "pCK4tx",
+            "pCK2tx", "pCK3tx", "pCK4tx",
             "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"
         ] and headline_main:
             
