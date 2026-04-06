@@ -1034,10 +1034,10 @@ def fetch_region(region_code):
             "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"
         ] and headline_main:
             
-            if pattern == "pCRntx" and has_day:
+            """if pattern == "pCRntx" and has_day:
                 pass  # skip night headline if day exists
-            else:
-                output_lines.append(f'<br><b>{headline_main}</b><br>')
+            else:"""
+            output_lines.append(f'<br><b>{headline_main}</b><br>')
 
         for item in items:
             h = item.get("headline")
