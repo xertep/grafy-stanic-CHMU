@@ -1034,10 +1034,10 @@ def fetch_region(region_code):
             "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"
         ] and headline_main:
             
-            #if pattern == "pCRntx" and has_day:
-             #   pass  # skip night headline if day exists
-            #else:
-            output_lines.append(f'<br><b>{headline_main}</b><br>')
+            if pattern == "pCRntx" and has_day:
+                pass  # skip night headline if day exists
+            else:
+                output_lines.append(f'<br><b>{headline_main}</b><br>')
 
         for item in items:
             h = item.get("headline")
@@ -1370,6 +1370,11 @@ elif mode == "Textové předpovědi":
 
 # ---------------- PRECIP MODE ----------------
 elif mode == "Srážkové mapy 24h Aladin":
+
+    st.markdown(
+        'Víc map z Aladina (experiment) <a href="https://aladin-open-data-chmu.streamlit.app/" target="_blank"><b>tady</b></a>',
+        unsafe_allow_html=True
+    )
 
     st.subheader("24h srážky – Aladin")
 
