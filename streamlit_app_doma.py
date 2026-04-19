@@ -1163,7 +1163,7 @@ def fetch_mountain(mountain_code):
 st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
-mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Srážkové mapy 24h Aladin"])
+mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Mapy Aladin"])
 
 if "last_mode" not in st.session_state:
     st.session_state.last_mode = None
@@ -1369,10 +1369,10 @@ elif mode == "Textové předpovědi":
     forecast_placeholder.markdown(forecast_html, unsafe_allow_html=True)
 
 # ---------------- PRECIP MODE ----------------
-elif mode == "Srážkové mapy 24h Aladin":
+elif mode == "Mapy Aladin":
 
     st.markdown(
-        'Víc map z Aladina (experiment) <a href="https://aladin-open-data-chmu.streamlit.app/" target="_blank"><b>tady</b></a>',
+        '#### Víc map z Aladina najdete <a href="https://aladin-open-data-chmu.streamlit.app/" target="_blank"><b>tady</b></a>',
         unsafe_allow_html=True
     )
 
@@ -1380,25 +1380,38 @@ elif mode == "Srážkové mapy 24h Aladin":
 
     BASE_URL_FLOODS = "https://opendata.chmi.cz/meteorology/floods/"
 
-    # --- Generate last 8 runs ---
-    def get_last_runs(n=8, availability_delay_hours=2.5):
-        now = datetime.utcnow()
+    @st.cache_data(ttl=600, show_spinner="Načítám data...")
+    def get_last_runs_from_server(n=8):
+        url = "https://opendata.chmi.cz/meteorology/floods/"
 
-        # apply delay (this is your key logic)
-        now_adjusted = now - timedelta(hours=availability_delay_hours)
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
 
-        # round down to nearest 6h cycle
-        hour = (now_adjusted.hour // 6) * 6
-        base = now_adjusted.replace(hour=hour, minute=0, second=0, microsecond=0)
+            pattern = re.compile(r"floods_prec24h_(\d{10})\+\d+\.png")
+            matches = pattern.findall(response.text)
 
-        runs = []
-        for i in range(n):
-            run_time = base - timedelta(hours=6*i)
-            runs.append(run_time.strftime("%Y%m%d%H"))
+            if not matches:
+                return []
 
-        return runs
+            newest_run = max(matches)   # newest timestamp string
+            newest_dt = datetime.strptime(newest_run, "%Y%m%d%H")
 
-    runs = get_last_runs(8, availability_delay_hours=2.5)
+            runs = []
+            for i in range(n):
+                dt = newest_dt - timedelta(hours=6 * i)
+                runs.append(dt.strftime("%Y%m%d%H"))
+
+            return runs
+
+        except Exception:
+            return []
+
+    runs = get_last_runs_from_server(8)
+
+    if not runs:
+        st.error("Nepodařilo se načíst dostupné běhy modelu.")
+        st.stop()
 
     # --- Selector ---
     selected_run = st.segmented_control(
