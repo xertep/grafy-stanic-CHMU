@@ -12,6 +12,11 @@ import re
 from email.utils import parsedate_to_datetime
 import pytz
 
+from io import BytesIO
+from zoneinfo import ZoneInfo
+from PIL import Image, ImageDraw
+import time
+
 # ---------------- STATE INIT (TOP OF APP) ----------------
 if "selected_element" not in st.session_state:
     st.session_state.selected_element = None
@@ -1159,11 +1164,12 @@ def fetch_mountain(mountain_code):
     return "".join(output_lines)
 
 
+
 # ---------------- UI ----------------
 st.title("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
-mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Mapy Aladin"])
+mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Mapy Aladin", "Radar"])
 
 if "last_mode" not in st.session_state:
     st.session_state.last_mode = None
@@ -1460,4 +1466,117 @@ elif mode == "Mapy Aladin":
 
         st.image(img_url, use_container_width=False)
         st.write("")
+
+# ---------------- RADAR MODE ----------------
+elif mode == "Radar":
+
+    st.subheader("Radar (ČHMÚ open data)")
+
+    BASE_URL = "https://opendata.chmi.cz/meteorology/weather/radar/composite/maxz/png_masked/"
+    PNG_EXTENT = [11.267, 20.770, 48.047, 52.167]
+
+    MARKERS = [
+        (16.1113, 49.0546),
+        (16.5642, 49.2147)
+    ]
+
+    @st.cache_data(ttl=60, show_spinner=False)
+    def get_latest_radar_files(n=20):
+        try:
+            response = requests.get(BASE_URL, timeout=10)
+            response.raise_for_status()
+
+            pattern = re.compile(r"pacz2gmaps3\.z_max3d\.(\d{8}\.\d{4})\.0\.png")
+            matches = pattern.findall(response.text)
+
+            if not matches:
+                return []
+
+            latest = sorted(matches)[-n:]
+
+            return [
+                f"pacz2gmaps3.z_max3d.{ts}.0.png"
+                for ts in latest
+            ]
+
+        except Exception:
+            return []
+
+    @st.cache_data(ttl=60, show_spinner=False)
+    def load_radar_images(file_urls):
+        images = []
+        session = requests.Session()
+
+        for url in file_urls:
+            r = session.get(url, timeout=10)
+            r.raise_for_status()
+            img = Image.open(BytesIO(r.content)).convert("RGBA")
+            images.append(img)
+
+        return images
+
+    @st.cache_resource
+    def load_border_overlay():
+        return Image.open("border_overlay.png").convert("RGBA")
+
+    def lonlat_to_pixel(lon, lat, width, height):
+        min_lon, max_lon, min_lat, max_lat = PNG_EXTENT
+        x = int((lon - min_lon) / (max_lon - min_lon) * width)
+        y = int((max_lat - lat) / (max_lat - min_lat) * height)
+        return x, y
+
+    @st.cache_resource
+    def build_combined_frames(frames, border_overlay):
+        combined_frames = []
+
+        for radar_img in frames:
+            radar_img = radar_img.convert("RGBA")
+
+            white_bg = Image.new("RGBA", radar_img.size, "white")
+            white_bg.paste(radar_img, (0, 0), radar_img)
+
+            overlay = border_overlay.resize(radar_img.size)
+            combined = Image.alpha_composite(white_bg, overlay)
+
+            draw = ImageDraw.Draw(combined)
+            width, height = combined.size
+
+            for lon, lat in MARKERS:
+                x, y = lonlat_to_pixel(lon, lat, width, height)
+                size = 4
+                draw.line((x-size, y, x+size, y), fill="#02ebdb", width=2)
+                draw.line((x, y-size, x, y+size), fill="#02ebdb", width=2)
+
+            combined_frames.append(combined)
+
+        return combined_frames
+
+    @st.cache_resource
+    def build_gif(frames):
+        buf = BytesIO()
+        frames[0].save(
+            buf,
+            format="GIF",
+            save_all=True,
+            append_images=frames[1:],
+            duration=400,
+            loop=0
+        )
+        buf.seek(0)
+        return buf.getvalue()
+
+    border_overlay = load_border_overlay()
+
+    radar_files = get_latest_radar_files()
+
+    if not radar_files:
+        st.error("Nepodařilo se načíst radarová data.")
+        st.stop()
+
+    file_urls = [BASE_URL + f for f in radar_files]
+    frames = load_radar_images(file_urls)
+    combined_frames = build_combined_frames(frames, border_overlay)
+    gif_data = build_gif(combined_frames)
+
+    st.image(gif_data, use_container_width=True)
 
