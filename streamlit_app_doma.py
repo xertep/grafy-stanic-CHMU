@@ -1473,7 +1473,8 @@ elif mode == "Radar":
     st.subheader("Radar")
 
     BASE_URL = "https://opendata.chmi.cz/meteorology/weather/radar/composite/maxz/png_masked/"
-    PNG_EXTENT = [11.267, 20.770, 48.047, 52.167]
+    FULL_EXTENT = [11.267, 20.770, 48.047, 52.167]
+    DATA_EXTENT = [11.267, 19.624, 48.047, 51.458]
 
     MARKERS = [
         (16.1113, 49.0546),
@@ -1519,10 +1520,9 @@ elif mode == "Radar":
     def load_border_overlay():
         return Image.open("border_overlay.png").convert("RGBA")
 
-    def lonlat_to_pixel(lon, lat, width, height):
-        min_lon, max_lon, min_lat, max_lat = PNG_EXTENT
-        x = int((lon - min_lon) / (max_lon - min_lon) * width)
-        y = int((max_lat - lat) / (max_lat - min_lat) * height)
+    def lonlat_to_pixel(extent, lon, lat, width, height):
+        x = int((lon - extent[0]) / (extent[1] - extent[0]) * width)
+        y = int((extent[3] - lat) / (extent[3] - extent[2]) * height)
         return x, y
 
     @st.cache_resource
@@ -1531,21 +1531,35 @@ elif mode == "Radar":
 
         for radar_img in frames:
             radar_img = radar_img.convert("RGBA")
+            width, height = radar_img.size
 
             white_bg = Image.new("RGBA", radar_img.size, "white")
             white_bg.paste(radar_img, (0, 0), radar_img)
 
-            overlay = border_overlay.resize(radar_img.size)
-            combined = Image.alpha_composite(white_bg, overlay)
+            # where the smaller radar map sits inside the full PNG
+            x1, y1 = lonlat_to_pixel(FULL_EXTENT, DATA_EXTENT[0], DATA_EXTENT[3], width, height)
+            x2, y2 = lonlat_to_pixel(FULL_EXTENT, DATA_EXTENT[1], DATA_EXTENT[2], width, height)
+
+            map_w = x2 - x1
+            map_h = y2 - y1
+
+            # resize border only for the actual radar map area
+            overlay_small = border_overlay.resize((map_w, map_h))
+
+            # transparent full-size overlay
+            overlay_full = Image.new("RGBA", radar_img.size, (0, 0, 0, 0))
+            overlay_full.paste(overlay_small, (x1, y1), overlay_small)
+
+            combined = Image.alpha_composite(white_bg, overlay_full)
 
             draw = ImageDraw.Draw(combined)
-            width, height = combined.size
 
             for lon, lat in MARKERS:
-                x, y = lonlat_to_pixel(lon, lat, width, height)
+                x, y = lonlat_to_pixel(FULL_EXTENT, lon, lat, width, height)
+
                 size = 4
-                draw.line((x-size, y, x+size, y), fill="#02ebdb", width=2)
-                draw.line((x, y-size, x, y+size), fill="#02ebdb", width=2)
+                draw.line((x - size, y, x + size, y), fill="#02ebdb", width=2)
+                draw.line((x, y - size, x, y + size), fill="#02ebdb", width=2)
 
             combined_frames.append(combined)
 
