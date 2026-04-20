@@ -1502,7 +1502,7 @@ elif mode == "Radar":
         except Exception:
             return []
 
-    @st.cache_data(ttl=60, show_spinner=False)
+    @st.cache_data(ttl=60, show_spinner="Načítám data...")
     def load_radar_images(file_urls):
         images = []
         session = requests.Session()
