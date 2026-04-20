@@ -1470,7 +1470,7 @@ elif mode == "Mapy Aladin":
 # ---------------- RADAR MODE ----------------
 elif mode == "Radar":
 
-    st.subheader("Radar (ČHMÚ open data)")
+    st.markdown("##### Radar")
 
     BASE_URL = "https://opendata.chmi.cz/meteorology/weather/radar/composite/maxz/png_masked/"
     PNG_EXTENT = [11.267, 20.770, 48.047, 52.167]
@@ -1566,6 +1566,11 @@ elif mode == "Radar":
         return buf.getvalue()
 
     border_overlay = load_border_overlay()
+
+    if st.button("🔄 Aktualizovat radar"):
+        st.cache_data.clear()
+        st.cache_resource.clear()
+        st.rerun()
 
     radar_files = get_latest_radar_files()
 
