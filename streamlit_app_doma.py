@@ -1470,7 +1470,7 @@ elif mode == "Mapy Aladin":
 # ---------------- RADAR MODE ----------------
 elif mode == "Radar":
 
-    st.markdown("##### Radar")
+    st.subheader("Radar")
 
     BASE_URL = "https://opendata.chmi.cz/meteorology/weather/radar/composite/maxz/png_masked/"
     PNG_EXTENT = [11.267, 20.770, 48.047, 52.167]
