@@ -1379,7 +1379,7 @@ elif mode == "Textové předpovědi":
 elif mode == "Mapy Aladin":
 
     st.markdown("### Víc map z Aladina najdete tady:")
-    st.markdown("[https://aladin-open-data-chmu.streamlit.app/](https://aladin-open-data-chmu.streamlit.app/)")
+    st.markdown("[https://aladin-open-data-chmu-t7goat3t8imstn56yc6ash.streamlit.app/](https://aladin-open-data-chmu-t7goat3t8imstn56yc6ash.streamlit.app/)")
 
     st.markdown("#####  ")
     st.markdown(
