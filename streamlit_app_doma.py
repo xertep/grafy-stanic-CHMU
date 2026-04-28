@@ -957,7 +957,7 @@ def fetch_region(region_code):
         evening_update_detected = (
             "pCK0tx" in times and
             "pCKntx" in times and
-            times["pCRntx"] > times["pCR0tx"]
+            times["pCKntx"] > times["pCK0tx"]
         )
 
         if evening_update_detected:
