@@ -937,7 +937,7 @@ def fetch_region(region_code):
             if h1 == h2:
                 all_data = [x for x in all_data if x[0] != "pCK2tx"]
 
-    # CR remove outdated evening
+    # CR remove outdated day 0
     if region_code == "CR":
         times = {p: t for p, _, _, _, t, _ in all_data}
 
@@ -949,6 +949,19 @@ def fetch_region(region_code):
 
         if evening_update_detected:
             all_data = [x for x in all_data if x[0] != "pCR0tx"]
+
+    # Region remove outdated day 0
+    if region_code != "CR":
+        times = {p: t for p, _, _, _, t, _ in all_data}
+
+        evening_update_detected = (
+            "pCK0tx" in times and
+            "pCKntx" in times and
+            times["pCRntx"] > times["pCR0tx"]
+        )
+
+        if evening_update_detected:
+            all_data = [x for x in all_data if x[0] != "pCK0tx"]
 
     # CR duplicate headline removal (lower number wins)
     if region_code == "CR":
