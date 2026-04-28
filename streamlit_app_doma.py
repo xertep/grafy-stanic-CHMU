@@ -1019,7 +1019,7 @@ def fetch_region(region_code):
             normalized_item = " ".join(item_headline.lower().split()) if item_headline else ""
 
             if item_name == "textIntro" and not item_headline:
-                output_lines.append('<br><b>Úvod:</b><br>')
+                output_lines.append('<br><b>Stručné shrnutí počasí:</b><br>')
 
             elif item_headline and normalized_item != normalized_main:
                 output_lines.append(f'<br><b>{item_headline}</b><br>')
