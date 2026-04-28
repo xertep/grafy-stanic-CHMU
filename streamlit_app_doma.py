@@ -890,7 +890,7 @@ def fetch_region(region_code):
             for item in items:
                 h = item.get("headline", "")
                 if h:
-                    if "Počasí dnes večer a v noci (18-07):" in h:
+                    if "Počasí (18-07):" in h:
                         evening_found = True
                     if "Počasí (06-22):" in h:
                         morning_found = True
@@ -1014,7 +1014,7 @@ def fetch_region(region_code):
         order = {p: i for i, (p, _) in enumerate(CR_FORECAST_TYPES)}
         all_data.sort(key=lambda x: order.get(x[0], 999))
 
-    # Build output with HTML for bold and spacing
+    # Build output with HTML
     output_lines = []
 
     if place_name:
@@ -1024,36 +1024,42 @@ def fetch_region(region_code):
             output_lines.append(f'{date_range_text}<br>')
 
     has_day = any(p == "pCR0tx" for p, *_ in all_data)
+
     for pattern, headline_main, items, sender, t, created in all_data:
+        # section for further days
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
-            if not (morning_found and pattern == "pCK2tx"):
-                output_lines.append('<br><b>=== Další dny ===</b><br>')
-                dalsi_dny_inserted = True
+            output_lines.append('<br><b>=== Další dny ===</b><br>')
+            dalsi_dny_inserted = True
 
-        if evening_found and pattern == "pCK0tx":
-            continue
-        if morning_found and pattern == "pCK2tx":
-            continue
-
+        # show main headline
         if pattern not in [
             "pCK2tx", "pCK3tx", "pCK4tx",
             "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"
         ] and headline_main:
-            
+
             if pattern == "pCRntx" and has_day:
-                pass  # skip night headline if day exists
+                pass
             else:
                 output_lines.append(f'<br><b>{headline_main}</b><br>')
 
+        # show all items
         for item in items:
-            h = item.get("headline")
-            t = item.get("displayText")
-            if h:
-                output_lines.append(f'<br><b>{h}</b><br>')
-            if t:
-                t = t.replace("\xa0", " ")
-                output_lines.append(f'{t}<br>')
+            item_name = item.get("name")
+            item_headline = item.get("headline")
+            item_text = item.get("displayText")
 
+            # special rule for intro text
+            if item_name == "textIntro" and not item_headline:
+                output_lines.append(f'<br><b>Úvod:</b><br>')
+
+            elif item_headline:
+                output_lines.append(f'<br><b>{item_headline}</b><br>')
+
+            if item_text:
+                item_text = item_text.replace("\xa0", " ")
+                output_lines.append(f'{item_text}<br>')
+
+        # regional meteorologist
         if pattern == "pCK1tx" and sender:
             if created:
                 formatted = format_update_time(created)
@@ -1061,7 +1067,7 @@ def fetch_region(region_code):
                     output_lines.append(f'<br>{formatted}<br>')
             output_lines.append(f'Meteorolog: {sender}<br>')
 
-        # --- CR meteorologists ---
+        # CR meteorologists
         if region_code == "CR":
             if pattern == "pCR1tx" and sender:
                 if created:
@@ -1071,28 +1077,14 @@ def fetch_region(region_code):
                 output_lines.append(f'Meteorolog: {sender}<br>')
                 output_lines.append('<br><b>=== Další dny ===</b><br>')
 
-            # NEW: pCR4tx
-            if pattern == "pCR4tx" and sender:
+            if pattern in ["pCR4tx", "pCR8tx", "pCR8ts"] and sender:
                 if created:
                     formatted = format_update_time(created)
                     if formatted:
                         output_lines.append(f'<br>{formatted}<br>')
                 output_lines.append(f'Meteorolog: {sender}<br>')
 
-            if pattern == "pCR8tx" and sender:
-                if created:
-                    formatted = format_update_time(created)
-                    if formatted:
-                        output_lines.append(f'<br>{formatted}<br>')
-                output_lines.append(f'Meteorolog: {sender}<br>')
-
-            if pattern == "pCR8ts" and sender:
-                if created:
-                    formatted = format_update_time(created)
-                    if formatted:
-                        output_lines.append(f'<br>{formatted}<br>')
-                output_lines.append(f'Meteorolog: {sender}<br>')
-
+    # final regional sender
     for pattern, _, _, sender, _, created in reversed(all_data):
         if pattern == "pCK4tx" and sender:
             if created:
