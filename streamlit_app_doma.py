@@ -853,11 +853,8 @@ def get_latest_file(pattern, html):
 
 def fetch_region(region_code):
     html = get_forecast_listing()
-    sender_name = None
     place_name = None
     dalsi_dny_inserted = False
-    evening_found = False
-    morning_found = False
     all_data = []
     date_range_text = None
 
@@ -878,35 +875,39 @@ def fetch_region(region_code):
             features = data.get("data", {}).get("features", [])
             if not features:
                 continue
+
             props = features[0].get("properties", {})
+
             if not place_name:
-                place_name = props.get("place", {}).get("name", "Česká republika" if region_code=="CR" else "")
-            if not sender_name:
-                sender_name = props.get("senderName", "")
+                place_name = props.get("place", {}).get(
+                    "name",
+                    "Česká republika" if region_code == "CR" else ""
+                )
 
             headline_main = props.get("headline-main", {}).get("headline", "")
             items = sorted(props.get("data", []), key=lambda x: x.get("displayOrder", 0))
 
-            for item in items:
-                h = item.get("headline", "")
-                if h:
-                    if "Počasí (18-07):" in h:
-                        evening_found = True
-                    if "Počasí (06-22):" in h:
-                        morning_found = True
-
-            all_data.append((pattern, headline_main, items, props.get("senderName", ""), file_time, datum_vytvoreni))
+            all_data.append(
+                (
+                    pattern,
+                    headline_main,
+                    items,
+                    props.get("senderName", ""),
+                    file_time,
+                    datum_vytvoreni
+                )
+            )
 
         except Exception as e:
             st.error(f"Error loading {label}: {e}")
 
+    # region date range
     if region_code != "CR":
         pckn = next((x for x in all_data if x[0] == "pCKntx"), None)
         pck4 = next((x for x in all_data if x[0] == "pCK4tx"), None)
 
         if pckn and pck4:
             try:
-                # first item in data list
                 start_time = pckn[2][0].get("startTime")
                 end_time = pck4[2][0].get("endTime")
 
@@ -916,15 +917,15 @@ def fetch_region(region_code):
                 start_day = CZECH_DAYS_GENITIVE[start_dt.weekday()]
                 end_day = CZECH_DAYS_GENITIVE[end_dt.weekday()]
 
-                start_str = f"od {start_day} {start_dt.day}.{start_dt.month}."
-                end_str = f"do {end_day} {end_dt.day}.{end_dt.month}.{end_dt.year}"
-
-                date_range_text = f"{start_str} {end_str}"
+                date_range_text = (
+                    f"od {start_day} {start_dt.day}.{start_dt.month}. "
+                    f"do {end_day} {end_dt.day}.{end_dt.month}.{end_dt.year}"
+                )
 
             except Exception:
                 pass
 
-    # --- REMOVE duplicate day (pCK1tx vs pCK2tx) ---
+    # regional duplicate day removal
     if region_code != "CR":
         pck1 = next((x for x in all_data if x[0] == "pCK1tx"), None)
         pck2 = next((x for x in all_data if x[0] == "pCK2tx"), None)
@@ -934,39 +935,11 @@ def fetch_region(region_code):
             h2 = " ".join(pck2[1].lower().split())
 
             if h1 == h2:
-                # remove pCK2tx (duplicate day)
                 all_data = [x for x in all_data if x[0] != "pCK2tx"]
 
-    # --- MERGE NIGHT + NEXT DAY HEADLINE (regions only) ---
-    if region_code != "CR":
-        pckn = next((x for x in all_data if x[0] == "pCKntx"), None)
-        pck1 = next((x for x in all_data if x[0] == "pCK1tx"), None)
-
-        if pckn and pck1:
-            night_pattern, night_headline, night_items, night_sender, night_time, night_created = pckn
-            day_pattern, day_headline, day_items, day_sender, day_time, day_created = pck1
-
-            if night_headline and day_headline:
-                last_word = day_headline.strip().split()[-1]
-                merged_headline = f"{night_headline} a {last_word}"
-
-                # update night headline
-                for i, (p, h, items, sender, t, created) in enumerate(all_data):
-                    if p == "pCKntx":
-                        all_data[i] = (p, merged_headline, items, sender, t, created)
-
-            for i, (p, h, items, sender, t, created) in enumerate(all_data):
-                if p == "pCK1tx":
-                    all_data[i] = (p, "", items, sender, t, created)
-
+    # CR remove outdated evening
     if region_code == "CR":
         times = {p: t for p, _, _, _, t, _ in all_data}
-
-        evening_headline = None
-        evening_headline = next(
-            (h for p, h, _, _, _, _ in all_data if p == "pCR0tx"),
-            None
-        )
 
         evening_update_detected = (
             "pCR0tx" in times and
@@ -975,16 +948,9 @@ def fetch_region(region_code):
         )
 
         if evening_update_detected:
-            # remove outdated evening forecast
             all_data = [x for x in all_data if x[0] != "pCR0tx"]
 
-            # override headline
-            if evening_headline:
-                for i, (p, h, items, sender, t, created) in enumerate(all_data):
-                    if p == "pCRntx":
-                        new_headline = transform_evening_to_night(t)
-                        all_data[i] = (p, new_headline, items, sender, t, created)
-
+    # CR duplicate headline removal (lower number wins)
     if region_code == "CR":
         seen = {}
 
@@ -1014,52 +980,37 @@ def fetch_region(region_code):
         order = {p: i for i, (p, _) in enumerate(CR_FORECAST_TYPES)}
         all_data.sort(key=lambda x: order.get(x[0], 999))
 
-    # Build output with HTML
+    # build output
     output_lines = []
 
     if place_name:
         output_lines.append(f'<b>=== Předpověď {place_name} ===</b><br>')
-
         if date_range_text:
             output_lines.append(f'{date_range_text}<br>')
 
-    has_day = any(p == "pCR0tx" for p, *_ in all_data)
-
     for pattern, headline_main, items, sender, t, created in all_data:
-        # section for further days
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
             output_lines.append('<br><b>=== Další dny ===</b><br>')
             dalsi_dny_inserted = True
 
-        # show main headline
-        if pattern not in [
-            "pCK2tx", "pCK3tx", "pCK4tx",
-            "pCR2tx", "pCR3tx", "pCR4tx", "pCR5tx", "pCR8tx"
-        ] and headline_main:
+        # show every main headline exactly as received
+        if headline_main:
+            output_lines.append(f'<br><b>{headline_main}</b><br>')
 
-            if pattern == "pCRntx" and has_day:
-                pass
-            else:
-                output_lines.append(f'<br><b>{headline_main}</b><br>')
-
-        # show all items
         for item in items:
             item_name = item.get("name")
             item_headline = item.get("headline")
             item_text = item.get("displayText")
 
-            # special rule for intro text
             if item_name == "textIntro" and not item_headline:
-                output_lines.append(f'<br><b>Úvod:</b><br>')
-
+                output_lines.append('<br><b>Úvod:</b><br>')
             elif item_headline:
                 output_lines.append(f'<br><b>{item_headline}</b><br>')
 
             if item_text:
-                item_text = item_text.replace("\xa0", " ")
-                output_lines.append(f'{item_text}<br>')
+                output_lines.append(f'{item_text.replace("\\xa0", " ")}<br>')
 
-        # regional meteorologist
+        # region meteorologist
         if pattern == "pCK1tx" and sender:
             if created:
                 formatted = format_update_time(created)
