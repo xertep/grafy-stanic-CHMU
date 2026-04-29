@@ -997,18 +997,18 @@ def fetch_region(region_code):
     output_lines = []
 
     if place_name:
-        output_lines.append(f'<h4>=== Předpověď {place_name} ===</h4><br>')
+        output_lines.append(f'<h5>=== Předpověď {place_name} ===</h5>')
         if date_range_text:
             output_lines.append(f'{date_range_text}<br>')
 
     for pattern, headline_main, items, sender, t, created in all_data:
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
-            output_lines.append('<br><h4>=== Další dny ===</h4><br>')
+            output_lines.append('<br><h6>=== Další dny ===</h6>')
             dalsi_dny_inserted = True
 
         # show every main headline exactly as received
         if headline_main:
-            output_lines.append(f'<br><h5>{headline_main}</h5><br>')
+            output_lines.append(f'<br><h6>{headline_main}</h6><br>')
 
         for item in items:
             item_name = item.get("name")
@@ -1046,7 +1046,7 @@ def fetch_region(region_code):
                     if formatted:
                         output_lines.append(f'<br>{formatted}<br>')
                 output_lines.append(f'Meteorolog: {sender}<br>')
-                output_lines.append('<br><b>=== Další dny ===</b><br>')
+                output_lines.append('<br><h6>=== Další dny ===</h6>')
 
             if pattern in ["pCR4tx", "pCR8tx", "pCR8ts"] and sender:
                 if created:
