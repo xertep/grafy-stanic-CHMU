@@ -1021,6 +1021,9 @@ def fetch_region(region_code):
             if item_name == "textIntro" and not item_headline:
                 output_lines.append('<br><b>Stručné shrnutí počasí:</b><br>')
 
+            elif item_name == "textWeather" and not item_headline:
+                output_lines.append('<br><b>Počasí (00-24):</b><br>')
+
             elif item_headline and normalized_item != normalized_main:
                 output_lines.append(f'<br><b>{item_headline}</b><br>')
 
