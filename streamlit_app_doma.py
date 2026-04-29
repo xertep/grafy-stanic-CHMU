@@ -1003,12 +1003,12 @@ def fetch_region(region_code):
 
     for pattern, headline_main, items, sender, t, created in all_data:
         if pattern in ["pCK2tx", "pCK3tx", "pCK4tx"] and not dalsi_dny_inserted:
-            output_lines.append('<br><h6>=== Další dny ===</h6>')
+            output_lines.append('<br><h5>=== Další dny ===</h5>')
             dalsi_dny_inserted = True
 
         # show every main headline exactly as received
         if headline_main:
-            output_lines.append(f'<br><h6>{headline_main}</h6><br>')
+            output_lines.append(f'<br><h5>{headline_main}</h5>')
 
         for item in items:
             item_name = item.get("name")
