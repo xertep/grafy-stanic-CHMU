@@ -875,6 +875,15 @@ def fetch_region(region_code):
             headline_main = props.get("headline-main", {}).get("headline", "")
             items = sorted(props.get("data", []), key=lambda x: x.get("displayOrder", 0))
 
+            # move textUncertainty after textWind
+            uncertainty = [x for x in items if x.get("name") == "textUncertainty"]
+            items = [x for x in items if x.get("name") != "textUncertainty"]
+
+            for i, x in enumerate(items):
+                if x.get("name") == "textWind":
+                    items[i+1:i+1] = uncertainty
+                    break
+
             all_data.append(
                 (
                     pattern,
