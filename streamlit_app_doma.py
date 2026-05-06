@@ -751,6 +751,7 @@ def plot_region_element(region_key, element, regions, stations):
 # ---------------- TEXT FORECASTS FUNCTIONS ----------------
 
 BASE_URL_forecasts = "https://opendata.chmi.cz/meteorology/weather/forecast/now/"
+WARN_BASE_URL = "https://opendata.chmi.cz/meteorology/weather/alerts/cap/"
 
 # Forecast types
 REGION_FORECAST_TYPES = [
