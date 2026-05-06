@@ -18,6 +18,8 @@ from PIL import Image, ImageDraw
 import time
 import gc
 
+import xml.etree.ElementTree as ET
+
 # ---------------- STATE INIT (TOP OF APP) ----------------
 if "selected_element" not in st.session_state:
     st.session_state.selected_element = None
