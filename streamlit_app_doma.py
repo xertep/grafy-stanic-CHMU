@@ -802,6 +802,23 @@ CZECH_DAYS_GENITIVE = {
     6: "neděle",
 }
 
+WARN_REGIONS = {
+    "JM": "Jihomoravský kraj",
+    "ZL": "Zlínský kraj",
+    "VY": "Kraj Vysočina",
+    "PH": "Hlavní město Praha",
+    "SC": "Středočeský kraj",
+    "PL": "Plzeňský kraj",
+    "KV": "Karlovarský kraj",
+    "UL": "Ústecký kraj",
+    "LB": "Liberecký kraj",
+    "HK": "Královéhradecký kraj",
+    "PU": "Pardubický kraj",
+    "OL": "Olomoucký kraj",
+    "MS": "Moravskoslezský kraj",
+    "CB": "Jihočeský kraj"
+}
+
 
 @st.cache_data(ttl=120)  # cache for 2 minutes
 def get_forecast_listing():
@@ -1074,7 +1091,12 @@ def fetch_region(region_code):
             output_lines.append(f'Meteorolog: {sender}<br>')
             break
 
-    return "".join(output_lines)
+    forecast_html = "".join(output_lines)
+
+    # prepend warnings
+    warnings_html = fetch_warnings_html(region_code)
+
+    return warnings_html + forecast_html
 
 
 def fetch_mountain(mountain_code):
@@ -1135,6 +1157,164 @@ def fetch_mountain(mountain_code):
         output_lines.append(f'Meteorolog: {sender_name}<br>')
 
     return "".join(output_lines)
+
+
+# --- Warnings fetching functions ---
+def get_warning_files():
+    r = requests.get(WARN_BASE_URL, timeout=20)
+
+    matches = re.findall(
+        r'href="(alert_cap_50_\d+\.xml)".*?(\d{2}-[A-Za-z]{3}-\d{4}\s+\d{2}:\d{2})',
+        r.text,
+        re.DOTALL
+    )
+
+    files_with_dates = []
+    for fname, datestr in matches:
+        dt = datetime.strptime(datestr, "%d-%b-%Y %H:%M")
+        files_with_dates.append((fname, dt))
+
+    files_sorted = sorted(files_with_dates, key=lambda x: x[1], reverse=True)
+
+    #print("\n=== AVAILABLE FILES (TOP 5) ===")
+    #for f, d in files_sorted[:5]:
+     #   print(f, d)
+
+    selected = [f[0] for f in files_sorted[:1]]
+
+    #print("=== SELECTED FILES ===")
+    #for f in selected:
+     #   print(f)
+
+    return selected
+
+
+def parse_warning_file(file_name):
+    #print(f"\n--- PARSING FILE: {file_name} ---")
+    url = WARN_BASE_URL + file_name
+    r = requests.get(url, timeout=10)
+    root = ET.fromstring(r.content)
+    ns = {'cap': root.tag.split('}')[0].strip('{')} if '}' in root.tag else {}
+    warnings = []
+    infos = root.findall('.//cap:info', ns) if ns else root.findall('.//info')
+    for info in infos:
+        language = info.findtext('cap:language', default=None, namespaces=ns) if ns else info.findtext('language')
+        if language != 'cs': continue
+        def get(tag):
+            return info.findtext(f'cap:{tag}', default=None, namespaces=ns) if ns else info.findtext(tag)
+        event = get("event")
+        #print("EVENT:", event)
+        severity = SEVERITY_MAP.get(get("severity"), get("severity"))
+        certainty = CERTAINTY_MAP.get(get("certainty"), get("certainty"))
+        onset = get("onset")
+
+        # try to get end time (optional)
+        end_time = get("expires")
+
+        if not end_time:
+            params = info.findall('cap:parameter', ns) if ns else info.findall('parameter')
+            for param in params:
+                name = param.findtext('cap:valueName', namespaces=ns) if ns else param.findtext('valueName')
+                if name == "eventEndingTime":
+                    end_time = param.findtext('cap:value', namespaces=ns) if ns else param.findtext('value')
+
+        # ❗ ONLY onset is required
+        if not onset:
+            continue
+        onset_dt = datetime.fromisoformat(onset)
+
+        if end_time:
+            try:
+                end_dt = datetime.fromisoformat(end_time)
+                now = datetime.now(end_dt.tzinfo)
+
+                if end_dt < now:
+                    continue
+            except:
+                end_dt = None
+        else:
+            # 🔥 THIS is your "do odvolání"
+            end_dt = None
+        areas = info.findall('cap:area', ns) if ns else info.findall('area')
+        description = get('description')
+        for area in areas:
+            desc = area.findtext('cap:areaDesc', namespaces=ns) if ns else area.findtext('areaDesc')
+            #print("AREA:", desc)
+            if not desc: continue
+            if event and event.startswith("Žádná výstraha"):
+                continue
+            if event and event.startswith("Žádný výhled"):
+                continue
+            warnings.append({
+                "event": event, "severity": severity, "certainty": certainty,
+                "onset": onset_dt, "end": end_dt, "description": description, "area": desc
+            })
+    #print(f"TOTAL WARNINGS IN FILE: {len(warnings)}")
+    return warnings
+
+def get_warnings_for_region(region_name):
+    files = get_warning_files()
+
+    region_warnings = []
+    seen = set()
+
+    for f in files:
+        warnings = parse_warning_file(f)
+
+        #print(f"\nChecking file {f}, warnings found: {len(warnings)}")
+
+        for w in warnings:
+            #print("MATCH TEST:", region_name, "vs", w["area"])
+
+            key = (w["event"], w["area"])
+            if key in seen:
+                continue
+            seen.add(key)
+
+            if region_name in w["area"]:
+                #print(">>> MATCHED <<<")
+                region_warnings.append(w)
+
+
+    #print(f"\nFINAL WARNINGS FOR REGION: {len(region_warnings)}")
+
+    return region_warnings
+
+@st.cache_data(ttl=120)
+def fetch_warnings_html(region_code):
+    if region_code == "CR":
+        return ""  # ❗ no warnings for whole country
+
+    region_name = WARN_REGIONS.get(region_code)
+    if not region_name:
+        return ""
+
+    events = get_warnings_for_region(region_name)
+
+    if not events:
+        return ""  # don't show empty section
+
+    lines = []
+    lines.append('<span style="font-size:18px; font-weight:bold; color:red;">⚠️ Platné výstrahy v kraji</span><br>')
+
+    for w in events:
+        onset_str = w['onset'].strftime('%d.%m. %H:%M')
+
+        if w['end']:
+            end_str = w['end'].strftime('%d.%m. %H:%M')
+            validity = f"{onset_str} → {end_str}"
+        else:
+            validity = f"od {onset_str} (do odvolání)"
+
+        lines.append(
+            f'<br><b>{w["event"]}</b> ({w["severity"]})<br>'
+            f'{w["area"]}<br>'
+            f'Platnost: {validity}<br>'
+            f'{w["description"]}<br>'
+        )
+
+    lines.append("<br>")  # spacing after warnings
+    return "".join(lines)
 
 
 
