@@ -840,10 +840,10 @@ CERTAINTY_MAP = {
 
 def get_severity_color(severity):
     return {
-        "Moderate": "#fff3b0",   # soft yellow
-        "Severe":   "#ffd6a5",   # soft orange
-        "Extreme":  "#ffadad",   # soft red
-    }.get(severity, "#eeeeee")  # fallback (light grey)
+        "Moderate": "#b59b00",   # darker yellow (readable)
+        "Severe":   "#cc6d00",   # orange
+        "Extreme":  "#cc0000",   # red
+    }.get(severity, "#666666")  # fallback grey
 
 
 @st.cache_data(ttl=120)  # cache for 2 minutes
@@ -1336,7 +1336,7 @@ def fetch_warnings_html(region_code):
 
         lines.append(
             f'<br>'
-            f'<span style="background-color:{bg_color}; padding:3px 8px; border-radius:6px; display:inline-block;">'
+            f'<span style="color:{get_severity_color(w["severity"])};">'
             f'<b>{w["event"]}</b>'
             f'</span> '
             f'({w["severity"]}, {w["certainty"]})<br>'
