@@ -846,7 +846,7 @@ def get_severity_color(severity):
     }.get(severity, "#666666")
 
 
-@st.cache_data(ttl=120)  # cache for 2 minutes
+@st.cache_data(ttl=120, show_spinner="Načítám data...")  # cache for 2 minutes
 def get_forecast_listing():
     response = requests.get(BASE_URL_forecasts)
     return response.text
@@ -1270,6 +1270,8 @@ def parse_warning_file(file_name):
             if event and event.startswith("Žádná výstraha"):
                 continue
             if event and event.startswith("Žádný výhled"):
+                continue
+            if event and event.startswith("Dotok"):
                 continue
             warnings.append({
                 "event": event, "severity": severity, "certainty": certainty,
