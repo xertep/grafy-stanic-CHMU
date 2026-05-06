@@ -838,6 +838,13 @@ CERTAINTY_MAP = {
     "Unknown": "pravděpodobnost neznámá (předběžné varování)"
 }
 
+def get_severity_color(severity):
+    return {
+        "Moderate": "#fff3b0",   # soft yellow
+        "Severe":   "#ffd6a5",   # soft orange
+        "Extreme":  "#ffadad",   # soft red
+    }.get(severity, "#eeeeee")  # fallback (light grey)
+
 
 @st.cache_data(ttl=120)  # cache for 2 minutes
 def get_forecast_listing():
@@ -1325,8 +1332,14 @@ def fetch_warnings_html(region_code):
         else:
             validity = f"od {onset_str} do odvolání"
 
+        bg_color = get_severity_color(w["severity"])
+
         lines.append(
-            f'<br><b>{w["event"]}</b> ({w["severity"]}, {w["certainty"]})<br>'
+            f'<br>'
+            f'<span style="background-color:{bg_color}; padding:2px 6px; border-radius:4px;">'
+            f'<b>{w["event"]}</b>'
+            f'</span> '
+            f'({w["severity"]}, {w["certainty"]})<br>'
             f'{w["area"]}<br>'
             f'Platnost: {validity}<br>'
             f'{w["description"]}<br>'
