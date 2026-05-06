@@ -840,7 +840,7 @@ CERTAINTY_MAP = {
 
 def get_severity_color(severity):
     return {
-        "Nízký stupeň nebezpečí": "#b59b00",
+        "Nízký stupeň nebezpečí": "#cc6d00",
         "Vysoký stupeň nebezpečí": "#cc6d00",
         "Extrémní stupeň nebezpečí": "#cc0000",
     }.get(severity, "#666666")
