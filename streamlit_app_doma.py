@@ -822,6 +822,22 @@ WARN_REGIONS = {
     "CB": "Jihočeský kraj"
 }
 
+SEVERITY_MAP = {
+    "Extreme": "Extrémní stupeň nebezpečí",
+    "Severe": "Vysoký stupeň nebezpečí",
+    "Moderate": "Nízký stupeň nebezpečí",
+    "Minor": "Minimální nebo žádné nebezpečí",
+    "Unknown": "Míra nebezpečí zatím neznámá"
+}
+
+CERTAINTY_MAP = {
+    "Observed": "jev je již pozorován nebo se vyskytne v nejbližší době",
+    "Likely": "pravděpodobný jev (p > 50 %)",
+    "Possible": "možný jev (p <= 50 %) ",
+    "Unlikely": "nepravděpodobný jev (žádná nebo zrušená výstraha)",
+    "Unknown": "pravděpodobnost neznámá (předběžné varování)"
+}
+
 
 @st.cache_data(ttl=120)  # cache for 2 minutes
 def get_forecast_listing():
