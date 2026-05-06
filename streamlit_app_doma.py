@@ -1336,7 +1336,7 @@ def fetch_warnings_html(region_code):
 
         lines.append(
             f'<br>'
-            f'<span style="background-color:{bg_color}; padding:2px 6px; border-radius:4px;">'
+            f'<span style="background-color:{bg_color}; padding:3px 8px; border-radius:6px; display:inline-block;">'
             f'<b>{w["event"]}</b>'
             f'</span> '
             f'({w["severity"]}, {w["certainty"]})<br>'
