@@ -320,7 +320,7 @@ element_names = {
 }
 
 # ---------------- LOAD STATIONS ----------------
-@st.cache_data(ttl=0)
+@st.cache_data(ttl=0, show_spinner=False)
 def load_stations():
     try:
         yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
