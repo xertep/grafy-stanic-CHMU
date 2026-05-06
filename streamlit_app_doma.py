@@ -1252,7 +1252,7 @@ def parse_warning_file(file_name):
             except:
                 end_dt = None
         else:
-            # 🔥 THIS is your "do odvolání"
+            # THIS is your "do odvolání"
             end_dt = None
         areas = info.findall('cap:area', ns) if ns else info.findall('area')
         description = get('description')
@@ -1299,10 +1299,10 @@ def get_warnings_for_region(region_name):
 
     return region_warnings
 
-@st.cache_data(ttl=120)
+@st.cache_data(ttl=120, show_spinner="Načítám data...")
 def fetch_warnings_html(region_code):
     if region_code == "CR":
-        return ""  # ❗ no warnings for whole country
+        return ""  #  no warnings for whole country
 
     region_name = WARN_REGIONS.get(region_code)
     if not region_name:
@@ -1314,19 +1314,19 @@ def fetch_warnings_html(region_code):
         return ""  # don't show empty section
 
     lines = []
-    lines.append('<span style="font-size:18px; font-weight:bold; color:red;">⚠️ Platné výstrahy v kraji</span><br>')
+    lines.append('<span style="font-size:18px; font-weight:bold;">⚠️ Platné výstrahy v kraji</span><br>')
 
     for w in events:
         onset_str = w['onset'].strftime('%d.%m. %H:%M')
 
         if w['end']:
             end_str = w['end'].strftime('%d.%m. %H:%M')
-            validity = f"{onset_str} → {end_str}"
+            validity = f"od {onset_str} do {end_str}"
         else:
-            validity = f"od {onset_str} (do odvolání)"
+            validity = f"od {onset_str} do odvolání"
 
         lines.append(
-            f'<br><b>{w["event"]}</b> ({w["severity"]})<br>'
+            f'<br><b>{w["event"]}</b> ({w["severity"]}, {w["certainty"]})<br>'
             f'{w["area"]}<br>'
             f'Platnost: {validity}<br>'
             f'{w["description"]}<br>'
