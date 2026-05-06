@@ -840,10 +840,10 @@ CERTAINTY_MAP = {
 
 def get_severity_color(severity):
     return {
-        "Moderate": "#b59b00",   # darker yellow (readable)
-        "Severe":   "#cc6d00",   # orange
-        "Extreme":  "#cc0000",   # red
-    }.get(severity, "#666666")  # fallback grey
+        "Nízký stupeň nebezpečí": "#b59b00",
+        "Vysoký stupeň nebezpečí": "#cc6d00",
+        "Extrémní stupeň nebezpečí": "#cc0000",
+    }.get(severity, "#666666")
 
 
 @st.cache_data(ttl=120)  # cache for 2 minutes
