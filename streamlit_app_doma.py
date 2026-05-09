@@ -64,7 +64,7 @@ footer {visibility: hidden;}
 
 /* Remove extra top spacing */
 .block-container {
-    padding-top: 1rem;
+    padding-top: 0.2rem;
 }
 
 </style>
