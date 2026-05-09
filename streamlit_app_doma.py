@@ -49,6 +49,15 @@ st.markdown("""
     display: none;
 }
 
+[class*="viewerBadge"] {
+    display: none !important;
+}
+
+[class*="profileContainer"] {
+    display: none !important;
+}
+
+
 /* Old menu/footer fallback */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
