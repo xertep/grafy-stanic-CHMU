@@ -1373,7 +1373,7 @@ st.markdown(
 
     /* Target the selected button */
     .stSegmentedControl > div > div > div[aria-selected="true"] {
-        background-color: #2E7D32 !important;
+        background-color: #A20DFF !important;
         color: white !important;
     }
     </style>
