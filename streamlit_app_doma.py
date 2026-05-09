@@ -24,32 +24,38 @@ import xml.etree.ElementTree as ET
 st.markdown("""
 <style>
 
-/* Entire top bar */
+/* Top header */
 [data-testid="stHeader"] {
     display: none;
 }
 
-/* Toolbar top-right */
+/* Main toolbar */
 [data-testid="stToolbar"] {
     display: none;
 }
 
-/* Footer */
+/* Bottom decoration / footer */
 [data-testid="stDecoration"] {
     display: none;
 }
 
-footer {
+/* Streamlit floating button(s) */
+[data-testid="stStatusWidget"] {
     display: none;
 }
 
-#MainMenu {
+/* Bottom right profile / deploy button area */
+.stAppDeployButton {
     display: none;
 }
 
-/* Reduce empty space after removing header */
-[data-testid="stAppViewContainer"] {
-    margin-top: -2rem;
+/* Old menu/footer fallback */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+
+/* Remove extra top spacing */
+.block-container {
+    padding-top: 1rem;
 }
 
 </style>
