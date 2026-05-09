@@ -1355,6 +1355,32 @@ def fetch_warnings_html(region_code):
 # ---------------- UI ----------------
 st.title("ČHMÚ meteostanice a předpovědi počasí")
 
+
+# Custom CSS to change the color of radio buttons and selectors
+st.markdown(
+    """
+    <style>
+    /* Change radio button color */
+    .stRadio > div > div > label > div {
+        background-color: #4CAF50 !important;
+    }
+
+    /* Target the segmented control buttons */
+    .stSegmentedControl > div > div > div {
+        background-color: #4CAF50 !important;
+        color: white !important;
+    }
+
+    /* Target the selected button */
+    .stSegmentedControl > div > div > div[aria-selected="true"] {
+        background-color: #2E7D32 !important;
+        color: white !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # ---------------- MODE ----------------
 mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Mapy Aladin", "Radar"])
 
