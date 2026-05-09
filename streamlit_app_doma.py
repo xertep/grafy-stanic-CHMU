@@ -20,6 +20,42 @@ import gc
 
 import xml.etree.ElementTree as ET
 
+
+st.markdown("""
+<style>
+
+/* Entire top bar */
+[data-testid="stHeader"] {
+    display: none;
+}
+
+/* Toolbar top-right */
+[data-testid="stToolbar"] {
+    display: none;
+}
+
+/* Footer */
+[data-testid="stDecoration"] {
+    display: none;
+}
+
+footer {
+    display: none;
+}
+
+#MainMenu {
+    display: none;
+}
+
+/* Reduce empty space after removing header */
+[data-testid="stAppViewContainer"] {
+    margin-top: -2rem;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
 # ---------------- STATE INIT (TOP OF APP) ----------------
 if "selected_element" not in st.session_state:
     st.session_state.selected_element = None
