@@ -1360,21 +1360,29 @@ st.title("ČHMÚ meteostanice a předpovědi počasí")
 st.markdown(
     """
     <style>
-    /* Change radio button color */
-    .stRadio > div > div > label > div {
+    /* Radio buttons: Target the selected option */
+    .stRadio > div > div > label > div > div {
         background-color: #4CAF50 !important;
+        border-color: #4CAF50 !important;
     }
 
-    /* Target the segmented control buttons */
+    /* Radio buttons: Target the selected option's inner circle */
+    .stRadio > div > div > label > div > div > div {
+        background-color: white !important;
+    }
+
+    /* Segmented control: Target all buttons */
     .stSegmentedControl > div > div > div {
         background-color: #4CAF50 !important;
         color: white !important;
+        border-color: #4CAF50 !important;
     }
 
-    /* Target the selected button */
+    /* Segmented control: Target the selected button */
     .stSegmentedControl > div > div > div[aria-selected="true"] {
         background-color: #A20DFF !important;
         color: white !important;
+        border-color: #A20DFF !important;
     }
     </style>
     """,
