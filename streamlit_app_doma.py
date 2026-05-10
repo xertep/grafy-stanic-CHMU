@@ -44,6 +44,12 @@ st.markdown("""
     display: none;
 }
 
+/* Hide Footer ("Made with Streamlit") */
+footer {visibility: hidden;}
+        
+/* Hide Developer/Author Badge (bottom-right) */
+div[data-testid="stDecoration"]
+
 /* Bottom right profile / deploy button area */
 .stAppDeployButton {
     display: none;
