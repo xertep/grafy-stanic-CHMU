@@ -44,12 +44,6 @@ st.markdown("""
     display: none;
 }
 
-/* Hide Footer ("Made with Streamlit") */
-footer {visibility: hidden;}
-        
-/* Hide Developer/Author Badge (bottom-right) */
-div[data-testid="stDecoration"]
-
 /* Bottom right profile / deploy button area */
 .stAppDeployButton {
     display: none;
@@ -389,6 +383,7 @@ def load_stations():
 stations = load_stations()
 
 # ---------------- DATA FETCH ----------------
+@st.cache_data(ttl=120, show_spinner=False)
 def fetch_station_data(wsi):
     dates = [(datetime.now() - timedelta(days=i)).strftime("%Y%m%d") for i in [2,1,0]]
     combined_df = pd.DataFrame()
@@ -789,10 +784,7 @@ def plot_region_element(region_key, element, regions, stations):
 
     ax.legend(fontsize=7, loc='upper left', ncol=3)
 
-    # --- Streamlit output ---
-    st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
-    st.pyplot(fig, use_container_width=False)
-    st.markdown('</div>', unsafe_allow_html=True)
+    return fig
 
 
 # ---------------- TEXT FORECASTS FUNCTIONS ----------------
@@ -1502,6 +1494,13 @@ elif mode == "Region":
 
     selected_element = elements_buttons.get(selected_element_label)
 
+
+    refresh_clicked = st.button("🔄 Aktualizovat data")
+
+    if refresh_clicked:
+        st.session_state.region_run = True
+    
+
     # 👇 INIT
     if "region_run" not in st.session_state:
         st.session_state.region_run = False
@@ -1509,10 +1508,19 @@ elif mode == "Region":
     if "last_selected_element" not in st.session_state:
         st.session_state.last_selected_element = None
 
-    # 👇 Detect CHANGE (this is the key)
-    if selected_element != st.session_state.last_selected_element:
+    if "region_figure" not in st.session_state:
+        st.session_state.region_figure = None
+
+    if "last_selected_region" not in st.session_state:
+        st.session_state.last_selected_region = None
+
+    if (
+        selected_element != st.session_state.last_selected_element
+        or selected_region != st.session_state.last_selected_region
+    ):
         st.session_state.region_run = True
         st.session_state.last_selected_element = selected_element
+        st.session_state.last_selected_region = selected_region
 
     region_placeholder = st.empty()
 
@@ -1520,12 +1528,18 @@ elif mode == "Region":
     if st.session_state.region_run and selected_element:
 
         with st.spinner("Načítám data..."):
-            plot_region_element(
+
+            fig = plot_region_element(
                 selected_region,
                 selected_element,
                 regions,
                 stations
             )
+
+            if st.session_state.region_figure is not None:
+                plt.close(st.session_state.region_figure)
+
+            st.session_state.region_figure = fig
 
         st.session_state.region_run = False
 
@@ -1534,6 +1548,11 @@ elif mode == "Region":
             "<p style='color:#777;'>Zobrazí vybraný prvek pro všechny dostupné stanice v kraji do jednoho grafu</p>",
             unsafe_allow_html=True
         )
+
+    if st.session_state.region_figure is not None:
+        st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
+        st.pyplot(st.session_state.region_figure, use_container_width=False)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- FORECAST MODE ----------------
 elif mode == "Textové předpovědi":
