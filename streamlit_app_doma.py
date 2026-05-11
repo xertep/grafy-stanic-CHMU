@@ -1524,6 +1524,12 @@ elif mode == "Region":
 
     region_placeholder = st.empty()
 
+    # SHOW OLD FIGURE FIRST
+    if st.session_state.region_figure is not None:
+        st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
+        st.pyplot(st.session_state.region_figure, use_container_width=False)
+        st.markdown('</div>', unsafe_allow_html=True)
+
     # ---------------- OUTPUT ----------------
     if st.session_state.region_run and selected_element:
 
@@ -1543,16 +1549,12 @@ elif mode == "Region":
 
         st.session_state.region_run = False
 
-    else:
+    elif st.session_state.region_figure is None:
+
         region_placeholder.markdown(
             "<p style='color:#777;'>Zobrazí vybraný prvek pro všechny dostupné stanice v kraji do jednoho grafu</p>",
             unsafe_allow_html=True
         )
-
-    if st.session_state.region_figure is not None:
-        st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
-        st.pyplot(st.session_state.region_figure, use_container_width=False)
-        st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- FORECAST MODE ----------------
 elif mode == "Textové předpovědi":
