@@ -1524,14 +1524,15 @@ elif mode == "Region":
 
     region_placeholder = st.empty()
 
-    # SHOW OLD FIGURE FIRST
-    if st.session_state.region_figure is not None:
-        st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
-        st.pyplot(st.session_state.region_figure, use_container_width=False)
-        st.markdown('</div>', unsafe_allow_html=True)
-
     # ---------------- OUTPUT ----------------
     if st.session_state.region_run and selected_element:
+
+        # 👇 keep showing old figure while loading
+        if st.session_state.region_figure is not None:
+            with region_placeholder.container():
+                st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
+                st.pyplot(st.session_state.region_figure, use_container_width=False)
+                st.markdown('</div>', unsafe_allow_html=True)
 
         with st.spinner("Načítám data..."):
 
@@ -1542,15 +1543,23 @@ elif mode == "Region":
                 stations
             )
 
-            if st.session_state.region_figure is not None:
-                plt.close(st.session_state.region_figure)
-
+            old_fig = st.session_state.region_figure
             st.session_state.region_figure = fig
+
+            if old_fig is not None:
+                plt.close(old_fig)
 
         st.session_state.region_run = False
 
-    elif st.session_state.region_figure is None:
+    # 👇 ALWAYS render current figure
+    if st.session_state.region_figure is not None:
 
+        with region_placeholder.container():
+            st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
+            st.pyplot(st.session_state.region_figure, use_container_width=False)
+            st.markdown('</div>', unsafe_allow_html=True)
+
+    else:
         region_placeholder.markdown(
             "<p style='color:#777;'>Zobrazí vybraný prvek pro všechny dostupné stanice v kraji do jednoho grafu</p>",
             unsafe_allow_html=True
