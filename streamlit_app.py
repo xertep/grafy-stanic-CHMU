@@ -369,7 +369,7 @@ def load_stations():
 stations = load_stations()
 
 # ---------------- DATA FETCH ----------------
-@st.cache_data(ttl=120, show_spinner=False)
+@st.cache_data(ttl=240, show_spinner=False)
 def fetch_station_data(wsi):
     dates = [(datetime.now() - timedelta(days=i)).strftime("%Y%m%d") for i in [2,1,0]]
     combined_df = pd.DataFrame()
