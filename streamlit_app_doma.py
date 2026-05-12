@@ -1522,19 +1522,20 @@ elif mode == "Region":
         st.session_state.last_selected_element = selected_element
         st.session_state.last_selected_region = selected_region
 
+    spinner_placeholder = st.empty()
     region_placeholder = st.empty()
 
     # ---------------- OUTPUT ----------------
     if st.session_state.region_run and selected_element:
 
-        # 👇 keep showing old figure while loading
+        # keep old figure visible
         if st.session_state.region_figure is not None:
             with region_placeholder.container():
                 st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
                 st.pyplot(st.session_state.region_figure, use_container_width=False)
                 st.markdown('</div>', unsafe_allow_html=True)
 
-        with st.spinner("Načítám data..."):
+        with spinner_placeholder, st.spinner("Načítám data..."):
 
             fig = plot_region_element(
                 selected_region,
@@ -1548,6 +1549,8 @@ elif mode == "Region":
 
             if old_fig is not None:
                 plt.close(old_fig)
+
+        spinner_placeholder.empty()
 
         st.session_state.region_run = False
 
