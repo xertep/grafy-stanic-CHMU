@@ -1345,7 +1345,7 @@ def get_warnings_for_region(region_name):
 
     return region_warnings
 
-@st.cache_data(ttl=120, show_spinner="Načítám data...")
+@st.cache_data(ttl=120, show_spinner="Hledám případné výstrahy...")
 def fetch_warnings_html(region_code):
     if region_code == "CR":
         return ""  #  no warnings for whole country
