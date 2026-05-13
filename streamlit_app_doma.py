@@ -1390,7 +1390,7 @@ def fetch_warnings_html(region_code):
 
 
 # ---------------- UI ----------------
-st.title("ČHMÚ meteostanice a předpovědi počasí")
+st.markdown("ČHMÚ meteostanice a předpovědi počasí")
 
 # ---------------- MODE ----------------
 mode = st.radio("Zvol režim", ["Stanice", "Region", "Textové předpovědi", "Mapy Aladin", "Radar"])
