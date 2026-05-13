@@ -1586,7 +1586,7 @@ elif mode == "Textové předpovědi":
     forecast_placeholder = st.empty()
 
     # ---------------- OUTPUT ----------------
-    with st.spinner("Načítám data..."):
+    with st.spinner("Načítám předpověď..."):
 
         if active is None:
             forecast_placeholder.markdown(
