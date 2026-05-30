@@ -1367,9 +1367,9 @@ def fetch_warnings_html(region_code):
 
         if w['end']:
             end_str = w['end'].strftime('%d.%m. %H:%M')
-            validity = f"do {end_str} (Platné od/Aktualizováno {onset_str})"
+            validity = f"od {onset_str} do {end_str})"
         else:
-            validity = f"do odvolání (Platné od/Aktualizováno {onset_str})"
+            validity = f"od {onset_str} do odvolání)"
 
         bg_color = get_severity_color(w["severity"])
 
@@ -1380,7 +1380,7 @@ def fetch_warnings_html(region_code):
             f'</span> '
             f'({w["severity"]}, {w["certainty"]})<br>'
             f'{w["area"]}<br>'
-            f'Platnost: {validity}<br>'
+            f'Platnost (nebo čas aktualizace): {validity}<br>'
             f'{w["description"]}<br>'
         )
 
