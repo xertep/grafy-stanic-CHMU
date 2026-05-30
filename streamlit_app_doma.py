@@ -1331,7 +1331,7 @@ def get_warnings_for_region(region_name):
         for w in warnings:
             #print("MATCH TEST:", region_name, "vs", w["area"])
 
-            key = (w["event"], w["area"])
+            key = (w["event"], w["area"], w["onset"], w["end"])
             if key in seen:
                 continue
             seen.add(key)
@@ -1345,7 +1345,7 @@ def get_warnings_for_region(region_name):
 
     return region_warnings
 
-@st.cache_data(ttl=120, show_spinner="Hledám případné výstrahy...")
+@st.cache_data(ttl=120, show_spinner="Načítám data...")
 def fetch_warnings_html(region_code):
     if region_code == "CR":
         return ""  #  no warnings for whole country
@@ -1621,7 +1621,7 @@ elif mode == "Textové předpovědi":
     forecast_placeholder = st.empty()
 
     # ---------------- OUTPUT ----------------
-    with st.spinner("Načítám předpověď..."):
+    with st.spinner("Načítám data..."):
 
         if active is None:
             forecast_placeholder.markdown(
