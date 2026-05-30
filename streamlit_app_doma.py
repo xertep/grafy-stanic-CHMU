@@ -1367,9 +1367,9 @@ def fetch_warnings_html(region_code):
 
         if w['end']:
             end_str = w['end'].strftime('%d.%m. %H:%M')
-            validity = f"od {onset_str} do {end_str})"
+            validity = f"od {onset_str} do {end_str}"
         else:
-            validity = f"od {onset_str} do odvolání)"
+            validity = f"od {onset_str} do odvolání"
 
         bg_color = get_severity_color(w["severity"])
 
