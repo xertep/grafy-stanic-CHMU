@@ -867,12 +867,28 @@ SEVERITY_MAP = {
     "Unknown": "Míra nebezpečí zatím neznámá"
 }
 
+SEVERITY_ORDER = {
+    "Extrémní stupeň nebezpečí": 5,
+    "Vysoký stupeň nebezpečí": 4,
+    "Nízký stupeň nebezpečí": 3,
+    "Minimální nebo žádné nebezpečí": 2,
+    "Míra nebezpečí zatím neznámá": 1
+}
+
 CERTAINTY_MAP = {
     "Observed": "jev je již pozorován nebo se vyskytne v nejbližší době",
     "Likely": "pravděpodobný jev (p > 50 %)",
     "Possible": "možný jev (p <= 50 %) ",
     "Unlikely": "nepravděpodobný jev (žádná nebo zrušená výstraha)",
     "Unknown": "pravděpodobnost neznámá (předběžné varování)"
+}
+
+CERTAINTY_ORDER = {
+    "jev je již pozorován nebo se vyskytne v nejbližší době": 5,
+    "pravděpodobný jev (p > 50 %)": 4,
+    "možný jev (p <= 50 %) ": 3,
+    "nepravděpodobný jev (žádná nebo zrušená výstraha)": 2,
+    "pravděpodobnost neznámá (předběžné varování)": 1
 }
 
 def get_severity_color(severity):
@@ -1344,7 +1360,13 @@ def get_warnings_for_region(region_name):
     #print(f"\nFINAL WARNINGS FOR REGION: {len(region_warnings)}")
 
     # sort by start time (earliest first)
-    region_warnings.sort(key=lambda w: (w["onset"], w["severity"]))
+    region_warnings.sort(
+        key=lambda w: (
+            -CERTAINTY_ORDER.get(w["certainty"], 0),
+            w["onset"],
+            -SEVERITY_ORDER.get(w["severity"], 0)
+        )
+    )
 
     return region_warnings
 
