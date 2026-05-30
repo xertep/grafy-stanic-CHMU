@@ -1343,6 +1343,9 @@ def get_warnings_for_region(region_name):
 
     #print(f"\nFINAL WARNINGS FOR REGION: {len(region_warnings)}")
 
+    # sort by start time (earliest first)
+    region_warnings.sort(key=lambda w: (w["onset"], w["severity"]))
+
     return region_warnings
 
 @st.cache_data(ttl=120, show_spinner="Hledám případné výstrahy...")
