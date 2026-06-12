@@ -1133,7 +1133,7 @@ def fetch_region(region_code):
                 output_lines.append(f'<br><b>{item_headline}</b><br>')
 
             if item_text:
-                output_lines.append(f'{item_text.replace("\\xa0", " ")}<br>')
+                output_lines.append(item_text.replace("\\xa0", " ") + "<br>")
 
         # region meteorologist
         if pattern == "pCK1tx" and sender:
