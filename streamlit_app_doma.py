@@ -1678,7 +1678,7 @@ elif mode == "Mapy Aladin":
 
     BASE_URL_FLOODS = "https://opendata.chmi.cz/meteorology/floods/"
 
-    @st.cache_data(ttl=60, show_spinner=False)
+    @st.cache_data(ttl=60, show_spinner="Načítám data...")
     def get_last_runs_from_server(n=8):
         url = "https://opendata.chmi.cz/meteorology/floods/"
 
