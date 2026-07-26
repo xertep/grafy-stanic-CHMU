@@ -882,7 +882,7 @@ def get_severity_color(severity):
         "Nízký stupeň nebezpečí": "#b59b00",
         "Vysoký stupeň nebezpečí": "#cc6d00",
         "Extrémní stupeň nebezpečí": "#cc0000",
-    }.get(severity, "#666666")
+    }.get(severity, "#d9fa00")
 
 
 @st.cache_data(ttl=120, show_spinner="Načítám data...")  # cache for 2 minutes
