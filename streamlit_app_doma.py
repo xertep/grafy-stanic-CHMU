@@ -896,7 +896,7 @@ def get_severity_color(severity):
         "Nízký stupeň nebezpečí": "#b59b00",
         "Vysoký stupeň nebezpečí": "#cc6d00",
         "Extrémní stupeň nebezpečí": "#cc0000",
-    }.get(severity, "#d9fa00")
+    }.get(severity, "#99ff00")
 
 
 @st.cache_data(ttl=120, show_spinner="Načítám data...")  # cache for 2 minutes
@@ -1396,6 +1396,11 @@ def fetch_warnings_html(region_code):
         else:
             validity = f"od {onset_str} do odvolání"
 
+        if w["severity"] == "Míra nebezpečí zatím neznámá":
+            severity_text = "Předběžné varování"
+        else:
+            severity_text = f"{w['severity']}, {w['certainty']}"
+
         bg_color = get_severity_color(w["severity"])
 
         lines.append(
@@ -1403,7 +1408,7 @@ def fetch_warnings_html(region_code):
             f'<span style="color:{get_severity_color(w["severity"])};">'
             f'<b>{w["event"]}</b>'
             f'</span> '
-            f'({w["severity"]}, {w["certainty"]})<br>'
+            f'{severity_text}<br>'
             f'{w["area"]}<br>'
             f'Platnost (nebo čas aktualizace): {validity}<br>'
             f'{w["description"]}<br>'
