@@ -102,7 +102,7 @@ regions = {
         "full": [
             "Tišnov, Hájek", "Protivanov", "Ivanovice na Hané", "Brno, Žabovřesky",
             "Troubsko", "Brno, Tuřany", "Nemochovice", "Ždánice", "Pohořelice",
-            "Kobylí", "Kuchařovice", "Brod nad Dyjí", "Strážnice", "Dyjákovice",
+            "Kobylí", "Kuchařovice", "Brod nad Dyjí", "Radějov", "Dyjákovice",
             "Lednice"
         ],
         "precip_only": [
@@ -403,8 +403,7 @@ def fetch_station_data(wsi):
 
         df = pd.DataFrame(values, columns=header)
         df['DT'] = pd.to_datetime(df['DT'], utc=True)\
-                       .dt.tz_convert('Europe/Prague')\
-                       .dt.tz_localize(None)
+                       .dt.tz_convert('Europe/Prague')
 
         df['VAL'] = pd.to_numeric(df['VAL'], errors='coerce')
         df = df[df['ELEMENT'].isin(elements)]
@@ -487,11 +486,14 @@ def plot_station(df, station_name, elevation):
         current_time += pd.Timedelta(hours=4)
 
     def custom_time_formatter(x, pos):
-        dt = mdates.num2date(x)
+        dt = mdates.num2date(x, tz=ZoneInfo("Europe/Prague"))
         return dt.strftime('%H:%M\n%d.%m.%Y') if dt.hour == 0 else dt.strftime('%H:%M')
 
     if ax_temp:
-        ax_temp.xaxis.set_major_locator(mdates.HourLocator(byhour=[0,4,8,12,16,20]))
+        ax_temp.xaxis.set_major_locator(
+            mdates.HourLocator(byhour=[0, 4, 8, 12, 16, 20],
+                               tz=ZoneInfo("Europe/Prague"))
+        )
         ax_temp.xaxis.set_major_formatter(plt.FuncFormatter(custom_time_formatter))
         plt.setp(ax_temp.get_xticklabels(), rotation=0, ha='center')
 
@@ -772,10 +774,13 @@ def plot_region_element(region_key, element, regions, stations):
         current_time += pd.Timedelta(hours=4)
 
     def custom_time_formatter(x, pos):
-        dt = mdates.num2date(x)
+        dt = mdates.num2date(x, tz=ZoneInfo("Europe/Prague"))
         return dt.strftime('%H:%M\n%d.%m.%Y') if dt.hour == 0 else dt.strftime('%H:%M')
 
-    ax.xaxis.set_major_locator(mdates.HourLocator(byhour=[0,4,8,12,16,20]))
+    ax.xaxis.set_major_locator(
+        mdates.HourLocator(byhour=[0, 4, 8, 12, 16, 20],
+                           tz=ZoneInfo("Europe/Prague"))
+    )
     ax.xaxis.set_major_formatter(plt.FuncFormatter(custom_time_formatter))
 
     # --- Labels ---
