@@ -431,6 +431,9 @@ def plot_station(df, station_name, elevation):
     ax_temp = None
     if temp_series is not None and not temp_series.empty:
         ax_temp = ax_temp_left.twinx()
+        ax_temp.set_zorder(10)
+        ax_temp.patch.set_visible(False)
+
         ax_temp.spines['right'].set_position(('outward', 0))
         ax_temp.tick_params(axis='y', colors='red')
         
