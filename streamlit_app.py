@@ -438,9 +438,9 @@ def plot_station(df, station_name, elevation):
         ax_temp.tick_params(axis='y', colors='red')
         
         if 'T' in df_pivot:
-            ax_temp.plot(df_pivot.index, df_pivot['T'], color='red')
+            ax_temp.plot(df_pivot.index, df_pivot['T'], color='red', zorder=3)
         if 'TPM' in df_pivot:
-            ax_temp.plot(df_pivot.index, df_pivot['TPM'], color='#9636b6', linewidth=1)
+            ax_temp.plot(df_pivot.index, df_pivot['TPM'], color='#9636b6', linewidth=1, zorder=2)
         
         centered_axis(ax_temp, temp_series, 10)
 
